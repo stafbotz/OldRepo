@@ -6,7 +6,7 @@ let sessionwb = './session/userclientwb.json'
 const { default: makeWASocket, BufferJSON, initInMemoryKeyStore, DisconnectReason, AnyMessageContent, delay, useSingleFileAuthState } = require('@adiwajshing/baileys-md')
 const { default: WAConnection, MessageType, Presence, Mimetype, relayWAMessage, prepareMessageFromContent, GroupSettingChange } = require('@adiwajshing/baileys')
 const { state, saveState } = useSingleFileAuthState(sessionmd)
-let multidevice = true
+let multidevice = false
 
 async function start() {
     if ( multidevice ) {
