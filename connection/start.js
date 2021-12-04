@@ -4,7 +4,7 @@ const fs = require('fs-extra')
 let sessionmd = './session/userclientmd.json'
 let sessionwb = './session/userclientwb.json'
 const { default: makeWASocket, BufferJSON, initInMemoryKeyStore, DisconnectReason, AnyMessageContent, delay, useSingleFileAuthState } = require('@adiwajshing/baileys-md')
-const { default: WAConnection, MessageType, Presence, Mimetype, relayWAMessage, prepareMessageFromContent, GroupSettingChange } = require('@adiwajshing/baileys')
+const { WAConnection, MessageType, Presence, Mimetype, relayWAMessage, prepareMessageFromContent, GroupSettingChange } = require('@adiwajshing/baileys')
 const { state, saveState } = useSingleFileAuthState(sessionmd)
 let multidevice = false
 
@@ -33,7 +33,7 @@ async function start() {
     client.ev.on('creds.update', () => saveState)
     return client
   } else {
-	    client = new WAConnection()
+	client = new WAConnection()
         client.version = [2, 2142, 12]
         client.logger.level = 'warn'
         client.on('qr', () => {
