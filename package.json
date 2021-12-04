@@ -76,7 +76,8 @@
     "tiktok-scraper-without-watermark": "^1.0.6",
     "twitter-url-direct": "^1.0.1",
     "uninstall": "0.0.0",
-    "util": "^0.12.4"
+    "util": "^0.12.4",
+    "xfarr-api": "^1.0.0"
   },
   "engines": {
     "node": "17.x",
