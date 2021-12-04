@@ -8,7 +8,7 @@ const { default: WAConnection, MessageType, Presence, Mimetype, relayWAMessage, 
 const { state, saveState } = useSingleFileAuthState(sessionmd)
 let multidevice = true
 
-async function starts() {
+async function start() {
 	if ( multidevice ) {
 		client = makeWASocket({ 
            printQRInTerminal: true, 
@@ -55,4 +55,4 @@ async function starts() {
    }
 }
 
-starts().catch (err => console.log('unexpected error: ' + err))
+start().catch (err => console.log('unexpected error: ' + err))
