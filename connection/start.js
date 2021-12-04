@@ -12,8 +12,7 @@ async function start() {
     if ( multidevice ) {
         client = makeWASocket({ 
            printQRInTerminal: true, 
-           logger: pino({ level: 'debug' }), 
-           browser: [ 'ClownWithClown', 'Safari', '1.0.0' ],
+           logger: pino({ level: 'debug' }),
            auth: state
         })
         client.ev.on('messages.upsert', async (mek) => {
