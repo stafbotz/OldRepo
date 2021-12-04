@@ -9,8 +9,8 @@ const { state, saveState } = useSingleFileAuthState(sessionmd)
 let multidevice = true
 
 async function start() {
-	if ( multidevice ) {
-		client = makeWASocket({ 
+    if ( multidevice ) {
+        client = makeWASocket({ 
            printQRInTerminal: true, 
            logger: pino({ level: 'debug' }), 
            browser: [ 'ClownWithClown', 'Safari', '1.0.0' ],
@@ -33,7 +33,7 @@ async function start() {
     })
     client.ev.on('creds.update', () => saveState)
     return client
-} else {
+  } else {
 	    client = new WAConnection()
         client.version = [2, 2142, 12]
         client.logger.level = 'warn'
