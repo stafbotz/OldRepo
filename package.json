@@ -10,10 +10,6 @@
     "start": "node main.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [
-    "whatsapp",
-    "bot"
-  ],
   "author": "IAM Imam Hafizh",
   "license": "ISC",
   "dependencies": {
@@ -78,10 +74,6 @@
     "uninstall": "0.0.0",
     "util": "^0.12.4",
     "xfarr-api": "^1.0.0"
-  },
-  "engines": {
-    "node": "17.x",
-    "npm": "8.x"
   },
   "devDependencies": {},
   "repository": {
