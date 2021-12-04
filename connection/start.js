@@ -6,7 +6,7 @@ const { state, saveState } = useSingleFileAuthState(sessionmd)
 const { color, bgcolor } = require('../lib/color')
 const pino = require('pino')
 const fs = require('fs-extra')
-let multidevice = false
+let multidevice = true
 
 async function start() {
     if ( multidevice ) {
