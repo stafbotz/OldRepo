@@ -1,10 +1,10 @@
-let sessionmd = './session/userclientmd.json'
 let sessionwb = './session/userclientwb.json'
+let sessionmd = './session/userclientmd.json'
 const { WAConnection, MessageType, Presence, Mimetype, relayWAMessage, prepareMessageFromContent, GroupSettingChange } = require('@adiwajshing/baileys')
 const { default: makeWASocket, BufferJSON, initInMemoryKeyStore, DisconnectReason, AnyMessageContent, delay, useSingleFileAuthState } = require('@adiwajshing/baileys-md')
 const { state, saveState } = useSingleFileAuthState(sessionmd)
-const { color, bgcolor } = require('../lib/color')
 const pino = require('pino')
+const { color, bgcolor } = require('../lib/color')
 const fs = require('fs-extra')
 let multidevice = true
 
