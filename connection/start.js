@@ -62,9 +62,9 @@ async function start() {
         console.log('connection closed, try to restart')
         if (!isReconnecting) {
             console.log('Connect To Phone Rejected and Shutting Down')
-        }
-     })
-   }
+      }
+   })
+}
 function nocache(module, cb = () => { }) {
     fs.watchFile(require.resolve(module), async () => {
         await uncache(require.resolve(module))
