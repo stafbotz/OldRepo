@@ -33,6 +33,5 @@ function start(file) {
       fs.unwatchFile(args[0])
     })
   })
-  // console.log(p)
 }
 start('./connection/start.js')
