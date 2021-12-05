@@ -1,6 +1,6 @@
 let sessionwb = './session/userclientwb.json'
 let sessionmd = './session/userclientmd.json'
-const { WAConnection, MessageType, Presence, Mimetype, relayWAMessage, prepareMessageFromContent, GroupSettingChange } = require('@adiwajshing/baileys')
+const { WAConnection, MessageType, Presence, MessageOptions, Mimetype, WALocationMessage, WA_MESSAGE_STUB_TYPES, ReconnectMode, ProxyAgent, waChatKey } = require('@adiwajshing/baileys')
 const { default: makeWASocket, BufferJSON, initInMemoryKeyStore, DisconnectReason, AnyMessageContent, delay, useSingleFileAuthState } = require('@adiwajshing/baileys-md')
 const { state, saveState } = useSingleFileAuthState(sessionmd)
 const pino = require('pino')
@@ -9,7 +9,7 @@ const fs = require('fs-extra')
 let multidevice = true
 
 async function start() {
-    if ( multidevice ) {
+  if ( multidevice ) {
         client = makeWASocket({ 
            printQRInTerminal: true, 
            logger: pino({ level: 'debug' }),
@@ -36,6 +36,7 @@ async function start() {
 	client = new WAConnection()
         client.version = [2, 2142, 12]
         client.logger.level = 'warn'
+        client.autoReconnect = ReconnectMode.onConnectionLost
         client.on('qr', () => {
            console.log('scan qr')
         })
@@ -50,7 +51,16 @@ async function start() {
       fs.writeFileSync(sessionwb, JSON.stringify(client.base64EncodedAuthInfo(), null, '\t'))
       client.on('chat-update', async (mek) => {
          require('../message/chats.js')(client, mek)
-     })
+      })
+      client.on('ws-close', () => {
+        console.log('Connection lost, trying to reconnect')
+      })
+      client.on('close', async ({ reason, isReconnecting }) => {
+        console.log('connection closed, try to restart')
+        if (!isReconnecting) {
+            console.log('Connect To Phone Rejected and Shutting Down')
+        }
+    })
    }
 }
 
