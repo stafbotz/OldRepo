@@ -8,6 +8,9 @@ const { color, bgcolor } = require('../lib/color')
 const fs = require('fs-extra')
 let multidevice = true
 
+require('../message/chats.js')
+nocache('../message/chats.js', module => console.log(module + 'is now updated'))
+
 async function start() {
   if ( multidevice ) {
         client = makeWASocket({ 
@@ -62,6 +65,22 @@ async function start() {
         }
      })
    }
+function nocache(module, cb = () => { }) {
+    fs.watchFile(require.resolve(module), async () => {
+        await uncache(require.resolve(module))
+        cb(module)
+    })
+}
+
+function uncache(module = '.') {
+    return new Promise((resolve, reject) => {
+        try {
+            delete require.cache[require.resolve(module)]
+            resolve()
+        } catch (e) {
+            reject(e)
+        }
+    })
 }
 
 start().catch (err => console.log('unexpected error: ' + err))
