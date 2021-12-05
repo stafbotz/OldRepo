@@ -36,13 +36,13 @@ async function start() {
     client.ev.on('creds.update', () => saveState)
     return client
   } else {
-       client = new WAConnection()
-       client.version = [2, 2142, 12]
-       client.logger.level = 'warn'
-       client.autoReconnect = ReconnectMode.onConnectionLost
-       client.on('qr', () => {
-          console.log('scan qr')
-       })
+      client = new WAConnection()
+      client.version = [2, 2142, 12]
+      client.logger.level = 'warn'
+      client.autoReconnect = ReconnectMode.onConnectionLost
+      client.on('qr', () => {
+         console.log('scan qr')
+      })
       fs.existsSync(sessionwb) && client.loadAuthInfo(sessionwb)
       client.on('connecting', () => {
          console.log('connecting')
