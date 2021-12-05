@@ -60,7 +60,7 @@ async function start() {
         if (!isReconnecting) {
             console.log('Connect To Phone Rejected and Shutting Down')
         }
-    })
+     })
    }
 }
 
