@@ -19,5 +19,5 @@
 
 <a href="https://github.com/ChacaX"><img src="http://github.com/ChacaX.png?size=100" width="100" height="100"></a> | <a href="https://github.com/pjavpsn"><img src="http://github.com/pjavpsn.png?size=100" width="100" height="100"></a>
 ---- | ----
-ChacaX | Pjavpsn
+[ChacaX](https://github.com/ChacaX)  | [Pjavpsn](https://github.com/pjavpsn)
 Script Feature | Fix connection
