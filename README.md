@@ -10,10 +10,3 @@
 <a href="https://github.com/stafbotz/followers"><img title="Followers" src="https://img.shields.io/github/followers/stafbotz?color=blue&style=flat-square"></a>
 <a href="https://github.com/stafbotz/BotWhatsapp/network/members"><img title="Forks" src="https://img.shields.io/github/forks/stafbotz/BotWhatsapp?color=red&style=flat-square"></a>
 <a href="https://github.com/stafbotz/BotWhatsapp/watchers"><img title="Watching" src="https://img.shields.io/github/watchers/stafbotz/BotWhatsapp?label=Watchers&color=blue&style=flat-square"></a>
-
----
-
-<a href="https://github.com/ChacaX"><img src="http://github.com/ChacaX.png?size=100" width="100" height="100"></a> | <a href="https://github.com/pjavpsn"><img src="http://github.com/pjavpsn.png?size=100" width="100" height="100"></a>
----- | ----
-[ChacaX](https://github.com/ChacaX)  | [Pjavpsn](https://github.com/pjavpsn)
-Script Feature | Fix connection
