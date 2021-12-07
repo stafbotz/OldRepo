@@ -81,7 +81,7 @@ module.exports = async(client, mek) => {
 			if (!packname) packname = 'WABot'; if (!author) author = 'Bot';	
 			author = author.replace(/[^a-zA-Z0-9]/g, '');	
 			let name = `${author}_${packname}`
-		    if (fs.existsSync(`../database/exifsticker/${name}.exif`)) return `../database/exifsticker/${name}.exif`
+		    if (fs.existsSync(`../database/${name}.exif`)) return `../database/${name}.exif`
 			const json = {	
 				"sticker-pack-name": packname,
 				"sticker-pack-publisher": author,
@@ -112,8 +112,8 @@ module.exports = async(client, mek) => {
 
 			const buffer = Buffer.concat([littleEndian, buf2, buf3, buf4])	
 
-			fs.writeFile(`../database/exifsticker/${name}.exif`, buffer, (err) => {	
-				return `../database/exifsticker/${name}.exif`	
+			fs.writeFile(`../database/${name}.exif`, buffer, (err) => {	
+				return `../database/${name}.exif`	
 			})	
 
 		}
