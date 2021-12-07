@@ -11,7 +11,7 @@ async function start() {
 
     const client = makeWASocket({ 
        printQRInTerminal: true, 
-       logger: pino({ level: 'debug' }),
+       logger: pino({ level: 'fatal' }),
        auth: state
     })
     /*client.ev.on('messages.upsert', async (mek) => {
@@ -27,7 +27,6 @@ async function start() {
          ? start()
          : console.log('whatsapp web is logged out')
        }
-       console.log('connected', update)
        if (connection === 'open') {
          console.log('opened connection')
        }
