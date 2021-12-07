@@ -11,7 +11,7 @@ async function start() {
 
     const client = makeWASocket({ 
        printQRInTerminal: true, 
-       logger: pino({ level: 'debug' }),
+       logger: pino({ level: 'fatal' }),
        auth: state
     })
     /*client.ev.on('messages.upsert', async (mek) => {
