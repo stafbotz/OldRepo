@@ -34,4 +34,4 @@ function start(file) {
     })
   })
 }
-start('./connection/start.js')
+start('./index.js')
