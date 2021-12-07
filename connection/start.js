@@ -81,6 +81,7 @@ function uncache(module = '.') {
             reject(e)
         }
     })
+  }
 }
 
 start().catch (err => console.log('unexpected error: ' + err))
