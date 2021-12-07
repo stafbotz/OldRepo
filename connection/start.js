@@ -7,8 +7,8 @@ const fs = require('fs-extra')
 let multidevice = true
 
 async function start() {
-	
-	require('../message/chats.js')
+
+    require('../message/chats.js')
     nocache('../message/chats.js', module => console.log(module + 'is now updated'))
 
   if ( multidevice ) {
