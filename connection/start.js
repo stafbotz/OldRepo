@@ -1,17 +1,15 @@
-let sessionwb = './session/userclientwb.json'
-let sessionmd = './session/userclientmd.json'
 const { WAConnection, MessageType, Presence, MessageOptions, Mimetype, WALocationMessage, WA_MESSAGE_STUB_TYPES, ReconnectMode, ProxyAgent, waChatKey } = require('@adiwajshing/baileys')
 const { default: makeWASocket, BufferJSON, initInMemoryKeyStore, DisconnectReason, AnyMessageContent, delay, useSingleFileAuthState } = require('@adiwajshing/baileys-md')
-const { state, saveState } = useSingleFileAuthState(sessionmd)
+const { state, saveState } = useSingleFileAuthState('./connection/session/userclientmd.json')
 const pino = require('pino')
 const { color, bgcolor } = require('../lib/color')
 const fs = require('fs-extra')
 let multidevice = true
 
 async function start() {
-
-require('../message/chats.js')
-nocache('../message/chats.js', module => console.log(module + 'is now updated'))
+	
+	require('../message/chats.js')
+    nocache('../message/chats.js', module => console.log(module + 'is now updated'))
 
   if ( multidevice ) {
         client = makeWASocket({ 
@@ -44,7 +42,7 @@ nocache('../message/chats.js', module => console.log(module + 'is now updated'))
       client.on('qr', () => {
          console.log('scan qr')
       })
-      fs.existsSync(sessionwb) && client.loadAuthInfo(sessionwb)
+      fs.existsSync('./session/userclientwb.json') && client.loadAuthInfo('./session/userclientwb.json')
       client.on('connecting', () => {
          console.log('connecting')
       })
@@ -52,7 +50,7 @@ nocache('../message/chats.js', module => console.log(module + 'is now updated'))
          console.log('connected')
       })
       await client.connect({timeoutMs: 30 * 1000})
-      fs.writeFileSync(sessionwb, JSON.stringify(client.base64EncodedAuthInfo(), null, '\t'))
+      fs.writeFileSync('./session/userclientwb.json', JSON.stringify(client.base64EncodedAuthInfo(), null, '\t'))
       client.on('chat-update', async (mek) => {
          require('../message/chats.js')(client, mek)
       })
