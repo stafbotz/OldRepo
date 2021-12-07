@@ -12,7 +12,7 @@ const ffmpeg = require('fluent-ffmpeg')
 const { removeBackgroundFromImageFile } = require('remove.bg')
 const lolis = require('lolis.life')
 const loli = new lolis()
-const setting = JSON.parse(fs.readFileSync('../database/settings.json'))
+//const setting = JSON.parse(fs.readFileSync('../database/settings.json'))
 
 function kyun(seconds){
   function pad(s){
