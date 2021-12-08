@@ -23,6 +23,7 @@ async function start() {
          ? start()
          : console.log('whatsapp web is logged out')
        }
+       console.log('connected to wa web', update)
        if (connection === 'open') {
          console.log('opened connection')
          require('./message/broadcast.js')(client)
