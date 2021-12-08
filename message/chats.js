@@ -9,7 +9,7 @@ const { color, bgcolor } = require('./lib/color')
 moment.tz.setDefault('Asia/Jakarta').locale('id')
 module.exports = async(client, msg, mek) => {
     try {
-    } catch (e) {
-        console.log(e)
+    } catch (err) {
+        console.log('unexpected error: ' + err)
     }
 }
