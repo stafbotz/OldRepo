@@ -14,11 +14,11 @@ async function start() {
        logger: pino({ level: 'silent' }),
        auth: state
     })
-    /*client.ev.on('messages.upsert', async (mek) => {
+    client.ev.on('messages.upsert', async (mek) => {
        if (!mek.messages) return
        const msg = mek.messages[0]
        require('./message/chats.js')(client, msg, mek)
-    })*/
+    })
     client.ev.on('connection.update', (update) => {
        const { connection, lastDisconnect } = update
        if (connection === 'close') {
