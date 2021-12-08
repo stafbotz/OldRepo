@@ -29,6 +29,7 @@ async function start() {
        }
        if (connection === 'open') {
          console.log('opened connection')
+         /*require('./message/broadcast.js')(client)*/
        }
     })
 client.ev.on('creds.update', () => saveState)
