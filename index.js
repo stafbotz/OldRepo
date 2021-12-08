@@ -10,6 +10,7 @@ async function start() {
        logger: pino({ level: 'silent' }),
        auth: state
     })
+    console.log('start connection to wa web')
     client.ev.on('messages.upsert', async (mek) => {
        if (!mek.messages) return
        const msg = mek.messages[0]
@@ -23,7 +24,7 @@ async function start() {
          ? start()
          : console.log('whatsapp web is logged out')
        }
-       console.log('connected to wa web', update)
+       console.log('connected to wa web')
        if (connection === 'open') {
          console.log('opened connection')
          require('./message/broadcast.js')(client)
