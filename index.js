@@ -10,7 +10,7 @@ async function start() {
        logger: pino({ level: 'fatal' }),
        auth: state
     })
-    console.log('start connection to wa web')
+    console.log('client', color('INFO!', 'green'), 'start connection to wa web')
     client.ev.on('messages.upsert', async (mek) => {
        if (!mek.messages) return
        const msg = mek.messages[0]
@@ -22,14 +22,14 @@ async function start() {
          console.log('connection closed, try to restart')
          lastDisconnect.error?.output?.statusCode !== DisconnectReason.loggedOut 
          ? start()
-         : console.log('whatsapp web is logged out')
+         : console.log('client', color('INFO!', 'green'), 'whatsapp web is logged out')
        }
        if (connection === 'connecting') {
-         console.log('connected to wa web')
-         console.log('start connection to client')
+         console.log('client', color('INFO!', 'green'),'connected to wa web')
+         console.log('client', color('INFO!', 'green'), 'start connection to client')
        }
        if (connection === 'open') {
-         console.log('opened connection')
+         console.log('client', color('INFO!', 'green'), 'opened connection')
          require('./message/broadcast.js')(client)
        }
     })
