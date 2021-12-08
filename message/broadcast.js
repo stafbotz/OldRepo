@@ -1,6 +1,6 @@
 const { prepareWAMessageMedia } = require('@adiwajshing/baileys-md')
 const fs = require('fs-extra')
-const { color, bgcolor } = require('./lib/color')
+const { color, bgcolor } = require('../lib/color')
 const moment = require('moment-timezone')
 
 moment.tz.setDefault('Asia/Jakarta').locale('id')
