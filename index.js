@@ -7,7 +7,7 @@ const fs = require('fs-extra')
 async function start() {
     const client = makeWASocket({ 
        printQRInTerminal: true, 
-       logger: pino({ level: 'silent' }),
+       logger: pino({ level: 'fatal' }),
        auth: state
     })
     console.log('start connection to wa web')
@@ -24,7 +24,10 @@ async function start() {
          ? start()
          : console.log('whatsapp web is logged out')
        }
-       console.log('connected to wa web')
+       if (connection === 'connecting') {
+         console.log('connected to wa web')
+         console.log('start connection to client')
+       }
        if (connection === 'open') {
          console.log('opened connection')
          require('./message/broadcast.js')(client)
