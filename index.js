@@ -2,7 +2,7 @@ const { default: makeWASocket, BufferJSON, initInMemoryKeyStore, DisconnectReaso
 const { state, saveState } = useSingleFileAuthState('./session.json')
 const pino = require('pino')
 const { color, bgcolor } = require('./lib/color')
-const { clientLog } = require('.lib/functions')
+const { clientLog } = require('./lib/functions')
 const fs = require('fs-extra')
 
 async function start() {
