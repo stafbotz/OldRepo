@@ -5,10 +5,6 @@ const { color, bgcolor } = require('./lib/color')
 const fs = require('fs-extra')
 
 async function start() {
-
-    require('./message/chats.js')
-    nocache('./message/chats.js', module => console.log(module + 'is now updated'))
-
     const client = makeWASocket({ 
        printQRInTerminal: true, 
        logger: pino({ level: 'silent' }),
@@ -29,29 +25,11 @@ async function start() {
        }
        if (connection === 'open') {
          console.log('opened connection')
-         /*require('./message/broadcast.js')(client)*/
+         require('./message/broadcast.js')(client)
        }
     })
-client.ev.on('creds.update', () => saveState)
-return client
-  
-function nocache(module, cb = () => { }) {
-    fs.watchFile(require.resolve(module), async () => {
-        await uncache(require.resolve(module))
-        cb(module)
-    })
-}
-
-function uncache(module = '.') {
-    return new Promise((resolve, reject) => {
-        try {
-            delete require.cache[require.resolve(module)]
-            resolve()
-        } catch (e) {
-            reject(e)
-        }
-    })
-  }
+  client.ev.on('creds.update', () => saveState)
+  return client
 }
 
 start().catch (err => console.log('unexpected error: ' + err))
