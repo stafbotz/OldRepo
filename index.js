@@ -48,7 +48,7 @@ async function start() {
              const sender = isGroup ? (msg.key.participant ? msg.key.participant : msg.participant) : msg.key.remoteJid
              const time = moment(Date.now()).tz('Asia/Jakarta').locale('id').format('DD/MM/YY HH:mm:ss')
              const botNumber = client.user.id.split(':')[0] + '@s.whatsapp.net'
-             const groupMetadata = isGroup ? await chika.groupMetadata(from) : ''
+             const groupMetadata = isGroup ? await client.groupMetadata(from) : ''
 	     const groupName = isGroup ? groupMetadata.subject : ''
 	     const groupId = isGroup ? groupMetadata.id : ''
              const groupMembers = isGroup ? groupMetadata.participants : ''
