@@ -75,11 +75,12 @@ async function start() {
              const isQuotedVideo = isQuotedMsg ? content.includes('videoMessage') ? true : false : false
              const isQuotedSticker = isQuotedMsg ? content.includes('stickerMessage') ? true : false : false
              
-             const mentionTag = type == 'extendedTextMessage' && msg.message.extendedTextMessage.contextInfo != null ? msg.message.extendedTextMessage.contextInfo.mentionedJid : ''
-             const mentionReply = type == 'extendedTextMessage' && msg.message.extendedTextMessage.contextInfo != null ? msg.message.extendedTextMessage.contextInfo.participant || '' : ''
-             const mention = mentionTag
-             mention != undefined ? mention.push(mentionReply) : ''
-             const mentionUser = mention != undefined ? mention.filter(n => n) : ''
+             const mentionTag = type == "extendedTextMessage" && msg.message.extendedTextMessage.contextInfo != null ? msg.message.extendedTextMessage.contextInfo.mentionedJid : []
+             const mentionReply = type == "extendedTextMessage" && msg.message.extendedTextMessage.contextInfo != null ? msg.message.extendedTextMessage.contextInfo.participant || "" : ""
+             const mention = typeof(mentionTag) == 'string' ? [mentionTag] : mentionTag
+             mention != undefined ? mention.push(mentionReply) : []
+             const mentionUserObject = mention != undefined ? mention.filter(n => n) : []
+             const mentionUserString = JSON.stringify(mentionUserObject)
 
              const reply = (text, mentions) => {
                  return client.sendMessage(from, { text: text, mentions: mentions ? mentions : [] }, { quoted: msg })
@@ -139,7 +140,7 @@ async function start() {
                      if (!isGroup) return reply('Hanya grup!')
                      if (!isBotGroupAdmins) return reply('Bot bukan Admin!')
                      if (!isGroupAdmins) return ('Hanya Admin!')          
-                     await client.groupParticipantsUpdate(from, [mentionUser], 'remove')
+                     await client.groupParticipantsUpdate(from, [mentionUserString], 'remove')
                  break
                  default:
              }	
