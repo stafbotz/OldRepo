@@ -19,6 +19,7 @@ const settings = JSON.parse(fs.readFileSync('./database/settings.json'))
 // Custom
 const ownerNumber = settings.ownerNumber + '@s.whatsapp.net'
 const ownerName = settings.ownerName
+const prefix = settings.prefix
 const limitCount = settings.limitCount
 
 async function start() {
@@ -35,13 +36,13 @@ async function start() {
              const msg = mek.messages[0]
              const content = JSON.stringify(msg.message)
              const type = Object.keys(msg.message)[0]
-             const body = (type === 'conversation' && msg.message.conversation.startsWith('')) ? msg.message.conversation : (type == 'imageMessage') && msg.message.imageMessage.caption.startsWith('') ? msg.message.imageMessage.caption : (type == 'documentMessage') && msg.message.documentMessage.caption.startsWith('') ? msg.message.documentMessage.caption : (type == 'videoMessage') && msg.message.videoMessage.caption.startsWith('') ? msg.message.videoMessage.caption : (type == 'extendedTextMessage') && msg.message.extendedTextMessage.text.startsWith('') ? msg.message.extendedTextMessage.text : (type == 'buttonsResponseMessage' && msg.message.buttonsResponseMessage.selectedButtonId.startsWith('')) ? msg.message.buttonsResponseMessage.selectedButtonId : (type == 'templateButtonReplyMessage') && msg.message.templateButtonReplyMessage.selectedId.startsWith('') ? msg.message.templateButtonReplyMessage.selectedId.startsWith('') : ''
+             const body = (type === 'conversation' && msg.message.conversation.startsWith(prefix)) ? msg.message.conversation : (type == 'imageMessage') && msg.message.imageMessage.caption.startsWith(prefix) ? msg.message.imageMessage.caption : (type == 'documentMessage') && msg.message.documentMessage.caption.startsWith(prefix) ? msg.message.documentMessage.caption : (type == 'videoMessage') && msg.message.videoMessage.caption.startsWith(prefix) ? msg.message.videoMessage.caption : (type == 'extendedTextMessage') && msg.message.extendedTextMessage.text.startsWith(prefix) ? msg.message.extendedTextMessage.text : (type == 'buttonsResponseMessage' && msg.message.buttonsResponseMessage.selectedButtonId.startsWith(prefix)) ? msg.message.buttonsResponseMessage.selectedButtonId : (type == 'templateButtonReplyMessage') && msg.message.templateButtonReplyMessage.selectedId.startsWith(prefix) ? msg.message.templateButtonReplyMessage.selectedId.startsWith(prefix) : ''
              const budy = (type === 'conversation') ? msg.message.conversation : (type === 'extendedTextMessage') ? msg.message.extendedTextMessage.text : ''	
 	     const command = body.slice(1).trim().split(/ +/).shift().toLowerCase()
              const args = body.trim().split(/ +/).slice(1)
              const q = args.join(' ')
              const pushname = msg.pushName
-             const isCmd = body.startsWith('')
+             const isCmd = body.startsWith(prefix)
              const fromMe = msg.key.fromMe
 	     const from = msg.key.remoteJid        
              const isGroup = msg.key.remoteJid.endsWith('@g.us')
