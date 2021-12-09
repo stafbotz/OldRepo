@@ -56,6 +56,37 @@ async function start() {
 	     const isBotGroupAdmins = groupAdmins.includes(botNumber) || false
 	     const isGroupAdmins = groupAdmins.includes(sender) || false
              const isOwner = ownerNumber.includes(sender)
+              
+             const isUrl = (url) => {
+	         return url.match(new RegExp(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%.+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%+.~#?&/=]*)/, 'gi'))
+	     }
+             const jsonformat = (json) => {
+                 return JSON.stringify(json, null, 2)
+             }
+             
+             const isImage = (type == 'imageMessage')
+             const isVideo = (type == 'videoMessage')
+             const isSticker = (type == 'stickerMessage')
+             const isQuotedMsg = (type == 'extendedTextMessage')
+             const isQuotedImage = isQuotedMsg ? content.includes('imageMessage') ? true : false : false
+             const isQuotedAudio = isQuotedMsg ? content.includes('audioMessage') ? true : false : false
+             const isQuotedDocument = isQuotedMsg ? content.includes('documentMessage') ? true : false : false
+             const isQuotedVideo = isQuotedMsg ? content.includes('videoMessage') ? true : false : false
+             const isQuotedSticker = isQuotedMsg ? content.includes('stickerMessage') ? true : false : false
+             
+             const reply = (text, mentions) => {
+                 return chika.sendMessage(from, { text: text, mentions: mentions ? mentions : [] }, { quoted: msg })
+             }
+             const sendContact = (jid, numbers, name, quoted, mentions) => {
+                 let number = numbers.replace(/[^0-9]/g, '')
+                 const vcard = 'BEGIN:VCARD\n' 
+                             + 'VERSION:3.0\n' 
+                             + 'FN:' + name + '\n'
+                             + 'ORG:;\n'
+                             + 'TEL;type=CELL;type=VOICE;waid=' + number + ':+' + number + '\n'
+                             + 'END:VCARD'
+             return client.sendMessage(from, { contacts: { displayName: name, contacts: [{ vcard }] }, mentions : mentions ? mentions : []}, { quoted: quoted })
+             }
        } catch (err) {
           console.log('unexpected error: ' + err)
       }
