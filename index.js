@@ -92,7 +92,7 @@ async function start() {
                  let res = await axios.head(url)
                  mime = res.headers['content-type']
                  if (mime.split('/')[1] === 'gif') {
-                   return client.sendMessage(from, { video: await convertGif(url), caption: caption, gifPlayback: true, mentions: mentions ? mentions : []}, {quoted: quoted})
+                   return client.sendMessage(from, { video: await getBuffer(url), caption: caption, gifPlayback: true, mentions: mentions ? mentions : []}, {quoted: quoted})
                  }
                  let type = mime.split('/')[0] + 'Message'
                  if (mime.split('/')[0] === 'image') {
