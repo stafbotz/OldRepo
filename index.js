@@ -129,6 +129,11 @@ async function start() {
                  case 'menu' :
                      client.sendMessage(from, { text: 'cant be changed!' }, { quoted: msg })
                  break
+                 case 'kick' :
+                     if (!isGroup) return reply('Hanya grup!')
+                     if (!isBotAdmins) return reply('Bot bukan Admin!')
+                     if (!isGroupAdmins) return ('Hanya Admin!')
+                 break
                  default:
              }	
        } catch (err) {
