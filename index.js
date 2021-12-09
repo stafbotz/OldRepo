@@ -32,7 +32,7 @@ async function start() {
     clientLog('info', 'start connection to wa web')
     client.ev.on('messages.upsert', async (mek) => {
        try {
-             if (!mek.messages) return
+             if (!mek.messages[0]) return
              const msg = mek.messages[0]
              const content = JSON.stringify(msg.message)
              const type = Object.keys(msg.message)[0]
@@ -137,7 +137,7 @@ async function start() {
                  break
                  case 'kick' :
                      if (!isGroup) return reply('Hanya grup!')
-                     if (!isBotAdmins) return reply('Bot bukan Admin!')
+                     if (!isBotGroupAdmins) return reply('Bot bukan Admin!')
                      if (!isGroupAdmins) return ('Hanya Admin!')          
                      await client.groupParticipantsUpdate(from, [mentionUser], 'remove')
                  break
