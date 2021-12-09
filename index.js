@@ -16,6 +16,11 @@ const antilink = JSON.parse(fs.readFileSync('./database/antilink.json'))
 const registered = JSON.parse(fs.readFileSync('./database/registered.json'))
 const settings = JSON.parse(fs.readFileSync('./database/settings.json'))
 
+// Custom
+const ownerNumber = settings.ownerNumber + @s.whatsapp.net
+const ownerName = settings.ownerName
+const limitCount = settings.limitCount
+
 async function start() {
     clientLog('warn', 'make socket a wa web')
     const client = makeWASocket({ 
