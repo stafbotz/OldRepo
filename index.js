@@ -35,7 +35,7 @@ async function start() {
              const msg = mek.messages[0]
              const content = JSON.stringify(msg.message)
              const type = Object.keys(msg.message)[0]
-             const body = (type === 'conversation' && msg.message.conversation.startsWith('')) ? msg.message.conversation : (type == 'imageMessage') && msg.message.imageMessage.caption.startsWith('') ? msg.message.imageMessage.caption : (type == 'documentMessage') && msg.message.documentMessage.caption.startsWith('') ? msg.message.documentMessage.caption : (type == 'videoMessage') && msg.message.videoMessage.caption.startsWith('') ? msg.message.videoMessage.caption : (type == 'extendedTextMessage') && msg.message.extendedTextMessage.text.startsWith('') ? msg.message.extendedTextMessage.text : (type == 'buttonsResponseMessage' && msg.message.buttonsResponseMessage.selectedButtonId.startsWith('')) ? msg.message.buttonsResponseMessage.selectedButtonId : (type == 'templateButtonReplyMessage') && msg.message.templateButtonReplyMessage.selectedId.startsWith('') ? msg.message.templateButtonReplyMessage.selectedId.startsWith('') : ""
+             const body = (type === 'conversation' && msg.message.conversation.startsWith('')) ? msg.message.conversation : (type == 'imageMessage') && msg.message.imageMessage.caption.startsWith('') ? msg.message.imageMessage.caption : (type == 'documentMessage') && msg.message.documentMessage.caption.startsWith('') ? msg.message.documentMessage.caption : (type == 'videoMessage') && msg.message.videoMessage.caption.startsWith('') ? msg.message.videoMessage.caption : (type == 'extendedTextMessage') && msg.message.extendedTextMessage.text.startsWith('') ? msg.message.extendedTextMessage.text : (type == 'buttonsResponseMessage' && msg.message.buttonsResponseMessage.selectedButtonId.startsWith('')) ? msg.message.buttonsResponseMessage.selectedButtonId : (type == 'templateButtonReplyMessage') && msg.message.templateButtonReplyMessage.selectedId.startsWith('') ? msg.message.templateButtonReplyMessage.selectedId.startsWith('') : ''
              const budy = (type === 'conversation') ? msg.message.conversation : (type === 'extendedTextMessage') ? msg.message.extendedTextMessage.text : ''	
 	     const command = body.slice(1).trim().split(/ +/).shift().toLowerCase()
              const args = body.trim().split(/ +/).slice(1)
@@ -47,7 +47,7 @@ async function start() {
              const isGroup = msg.key.remoteJid.endsWith('@g.us')
              const sender = isGroup ? (msg.key.participant ? msg.key.participant : msg.participant) : msg.key.remoteJid
              const time = moment(Date.now()).tz('Asia/Jakarta').locale('id').format('DD/MM/YY HH:mm:ss')
-             const botNumber = chika.user.id.split(':')[0] + '@s.whatsapp.net'
+             const botNumber = client.user.id.split(':')[0] + '@s.whatsapp.net'
              const groupMetadata = isGroup ? await chika.groupMetadata(from) : ''
 	     const groupName = isGroup ? groupMetadata.subject : ''
 	     const groupId = isGroup ? groupMetadata.id : ''
