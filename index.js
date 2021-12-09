@@ -75,7 +75,7 @@ async function start() {
              const isQuotedSticker = isQuotedMsg ? content.includes('stickerMessage') ? true : false : false
              
              const reply = (text, mentions) => {
-                 return chika.sendMessage(from, { text: text, mentions: mentions ? mentions : [] }, { quoted: msg })
+                 return client.sendMessage(from, { text: text, mentions: mentions ? mentions : [] }, { quoted: msg })
              }
              const sendContact = (jid, numbers, name, quoted, mentions) => {
                  let number = numbers.replace(/[^0-9]/g, '')
@@ -87,6 +87,46 @@ async function start() {
                              + 'END:VCARD'
              return client.sendMessage(from, { contacts: { displayName: name, contacts: [{ vcard }] }, mentions : mentions ? mentions : []}, { quoted: quoted })
              }
+             const sendFileFromUrl = async (from, url, caption, quoted, mentions) => {
+                 let mime = ''
+                 let res = await axios.head(url)
+                 mime = res.headers['content-type']
+                 if (mime.split('/')[1] === 'gif') {
+                   return client.sendMessage(from, { video: await convertGif(url), caption: caption, gifPlayback: true, mentions: mentions ? mentions : []}, {quoted: quoted})
+                 }
+                 let type = mime.split('/')[0] + 'Message'
+                 if (mime.split('/')[0] === 'image') {
+                   return client.sendMessage(from, { image: await getBuffer(url), caption: caption, mentions: mentions ? mentions : []}, {quoted: quoted})
+                 } else if(mime.split('/')[0] === 'video') {
+                   return client.sendMessage(from, { video: await getBuffer(url), caption: caption, mentions: mentions ? mentions : []}, {quoted: msg})
+                 } else if(mime.split('/')[0] === 'audio') {
+                    return client.sendMessage(from, { audio: await getBuffer(url), caption: caption, mentions: mentions ? mentions : [], mimetype: 'audio/mpeg'}, {quoted: quoted})
+                 } else {
+                    return client.sendMessage(from, { document: await getBuffer(url), mimetype: mime, caption: caption, mentions: mentions ? mentions : []}, {quoted: quoted})
+                }
+             }
+             const buttonsDefault = [
+                 { callButton: { displayText: 'Call Owner', phoneNumber: '+6283170659182'} },
+                 { urlButton: { displayText: 'Script Bot', url : 'https://github.com/stafbotz/BotWhatsapp'} },
+                 { quickReplyButton: { displayText: 'Owner', id: '' } },
+                 { quickReplyButton: { displayText: 'Rules', id: '' } }
+             ]
+
+             const textTemplateButtons = (from, text, footer, buttons) => {
+                 return client.sendMessage(from, { text: text, footer: footer, templateButtons: buttons })
+             }
+         
+             client.sendReadReceipt(from, sender, [msg.key.id])
+            
+             const hour_now = moment().format('HH:mm:ss')
+             if (!isGroup && isCmd) console.log(`{\n`, color(` from: "${sender.split('@')[0]}"\n  time: "${hour_now}"\n  command: "${command}"`,'yellow'), color(`\n}`,`white`))
+             if (!isGroup && !isCmd) console.log(`{\n`, color(` from: "${sender.split('@')[0]}"\n  time: "${hour_now}"\n  command: "${command}"`,'yellow'), color(`\n}`,`white`))
+	     if (isCmd && isGroup) console.log(`{\n`, color(` from: "${sender.split('@')[0]} - ${groupName}"\n  time: "${hour_now}"\n  command: "${command}"`,'yellow'), color(`\n}`,`white`))
+	     if (!isCmd && isGroup) console.log(`{\n`, color(` from: "${sender.split('@')[0]} - ${groupName}"\n  time: "${hour_now}"\n  command: "${command}"`,'yellow'), color(`\n}`,`white`))
+	     
+             switch (command) {
+
+             }	
        } catch (err) {
           console.log('unexpected error: ' + err)
       }
