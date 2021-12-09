@@ -14,12 +14,13 @@ moment.tz.setDefault('Asia/Jakarta').locale('id')
 // Database
 const antilink = JSON.parse(fs.readFileSync('./database/antilink.json'))
 const registered = JSON.parse(fs.readFileSync('./database/registered.json'))
+const settings = JSON.parse(fs.readFileSync('./database/settings.json'))
 
 async function start() {
     clientLog('warn', 'make socket a wa web')
     const client = makeWASocket({ 
        printQRInTerminal: true, 
-       logger: pino({ level: 'debug' }),
+       logger: pino({ level: 'silent' }),
        auth: state
     })
     clientLog('info', 'start connection to wa web')
@@ -34,8 +35,22 @@ async function start() {
 	     const command = body.slice(1).trim().split(/ +/).shift().toLowerCase()
              const args = body.trim().split(/ +/).slice(1)
              const q = args.join(' ')
-             const pushname = (msg.pushName != '' || msg.pushName != undefined) ? msg.pushName : undefined
+             const pushname = msg.pushName
              const isCmd = body.startsWith('')
+             const fromMe = msg.key.fromMe
+	     const from = msg.key.remoteJid        
+             const isGroup = msg.key.remoteJid.endsWith('@g.us')
+             const sender = isGroup ? (msg.key.participant ? msg.key.participant : msg.participant) : msg.key.remoteJid
+             const time = moment(Date.now()).tz('Asia/Jakarta').locale('id').format('DD/MM/YY HH:mm:ss')
+             const botNumber = chika.user.id.split(':')[0] + '@s.whatsapp.net'
+             const groupMetadata = isGroup ? await chika.groupMetadata(from) : ''
+	     const groupName = isGroup ? groupMetadata.subject : ''
+	     const groupId = isGroup ? groupMetadata.id : ''
+             const groupMembers = isGroup ? groupMetadata.participants : ''
+             const groupAdmins = isGroup ? getGroupAdmins(groupMembers) : ''
+	     const isBotGroupAdmins = groupAdmins.includes(botNumber) || false
+	     const isGroupAdmins = groupAdmins.includes(sender) || false
+             const isOwner = ownerNumber.includes(sender)
        } catch (err) {
           console.log('unexpected error: ' + err)
       }
