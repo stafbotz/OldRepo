@@ -79,8 +79,7 @@ async function start() {
              const mentionReply = type == "extendedTextMessage" && msg.message.extendedTextMessage.contextInfo != null ? msg.message.extendedTextMessage.contextInfo.participant || "" : ""
              const mention = typeof(mentionTag) == 'string' ? [mentionTag] : mentionTag
              mention != undefined ? mention.push(mentionReply) : []
-             const mentionUserObject = mention != undefined ? mention.filter(n => n) : []
-             const mentionUserString = JSON.stringify(mentionUserObject)
+             const mentionUser = mention != undefined ? mention : []
 
              const reply = (text, mentions) => {
                  return client.sendMessage(from, { text: text, mentions: mentions ? mentions : [] }, { quoted: msg })
@@ -140,8 +139,8 @@ async function start() {
                      if (!isGroup) return reply('Hanya grup!')
                      if (!isBotGroupAdmins) return reply('Bot bukan Admin!')
                      if (!isGroupAdmins) return ('Hanya Admin!')
-                     client.sendMessage(from, { text : 'String: ' + mentionUserString + ', Object: ' + mentionUserObject }, { quoted: msg })       
-                     await client.groupParticipantsUpdate(from, [mentionUserObject], 'remove')
+                     client.sendMessage(from, { text : 'String: ' + mentionUser  }, { quoted: msg })       
+                     await client.groupParticipantsUpdate(from, [mentionUser], 'remove')
                  break
                  default:
              }	
