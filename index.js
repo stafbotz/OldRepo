@@ -26,7 +26,6 @@ const authsession = fs.readFileSync('./session.json')
 const authold = fs.readFileSync('./session_old.json')
 
 async function start() {
-    await restoresession() 
     clientLog('warn', 'make socket a wa web')
     const client = makeWASocket({ 
        printQRInTerminal: true, 
