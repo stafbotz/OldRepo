@@ -24,7 +24,6 @@ const limitCount = settings.limitCount
 // Session
 const authsession = fs.readFileSync('./session.json')
 const authold = fs.readFileSync('./session_old.json')
-let statusclient = 'disconnect'
 
 async function start() {
     clientLog('warn', 'make socket a wa web')
@@ -168,17 +167,14 @@ async function start() {
          clientLog('info', 'start connection to client')
        }
        if (connection === 'open') {
-         statusclient = 'connected'
          clientLog('info', 'opened connection')
+         if (authsession !== authold) {
+           fs.writeFileSync('./session_old.json', authsession)
+           client.sendMessage(ownerNumber, { document: authsession , mimetype: 'application/json' })
+         }
        }
     })
   client.ev.on('creds.update', () => saveState)
-  if (authsession !== authold) {
-    fs.writeFileSync('./session_old.json', authsession)
-    if (statusclient !== 'disconnect') {
-      client.sendMessage(ownerNumber, { document: authsession , mimetype: 'application/json' })
-    }
-  }
   return client
 }
 
