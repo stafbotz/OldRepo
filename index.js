@@ -39,7 +39,7 @@ async function start() {
              const args = body.trim().split(/ +/).slice(1)
              const q = args.join(' ')
              const pushname = msg.pushName
-             const isCmd = body.startsWith(/^[°•π÷×¶∆£¢€¥®™✓=|!?#%^&.,\/\\©^]/)
+             const isCmd = body.startsWith('!' || '.' || '#' || '/')
              const fromMe = msg.key.fromMe
 	     const from = msg.key.remoteJid        
              const isGroup = msg.key.remoteJid.endsWith('@g.us')
