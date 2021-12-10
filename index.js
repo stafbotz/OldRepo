@@ -77,8 +77,7 @@ async function start() {
              const mention = typeof(mentionTag) == 'string' ? [mentionTag] : mentionTag
              mention != undefined ? mention.push(mentionReply) : []
              const mentionUser = mention != undefined ? mention.filter(n => n) : []
-             const mentionResult = JSON.stringify(mentionUser)
-
+             
              const reply = (text, mentions) => {
                  return client.sendMessage(from, { text: text, mentions: mentions ? mentions : [] }, { quoted: msg })
              }
@@ -137,7 +136,7 @@ async function start() {
                      if (!isGroup) return reply('Hanya grup!')
                      if (!isBotGroupAdmins) return reply('Bot bukan Admin!')
                      if (!isGroupAdmins) return ('Hanya Admin!')
-                     await client.groupParticipantsUpdate(from, ['6283106838529@s.whatsapp.net'], 'remove').then((res) => reply(jsonformat(res))).catch((err) => reply(jsonformat(err)))
+                     await client.groupParticipantsUpdate(from, [mentionUser], 'remove').then((res) => reply(jsonformat(res))).catch((err) => reply(jsonformat(err)))
                  break
                  case 'msg' :
                      client.sendMessage(from, { text : content }, { quoted: msg })
