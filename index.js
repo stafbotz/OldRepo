@@ -141,7 +141,7 @@ async function start() {
                      if (!isBotGroupAdmins) return reply('Bot bukan Admin!')
                      if (!isGroupAdmins) return ('Hanya Admin!')
                      client.sendMessage(from, { text : 'String: ' + mentionUserString + ', Object: ' + mentionUserObject }, { quoted: msg })       
-                     await client.groupParticipantsUpdate(from, [mentionUserString], 'remove')
+                     await client.groupParticipantsUpdate(from, [mentionUserObject], 'remove')
                  break
                  default:
              }	
