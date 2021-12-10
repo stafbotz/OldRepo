@@ -33,7 +33,7 @@ async function start() {
     client.ev.on('messages.upsert', async (mek) => {
        try {
              if (!mek.messages) return
-             const msg = mek.messages[0] != undefined ? mek.messages[0] : 'blocked'
+             const msg = mek.messages[0] === undefined ? 'blocked' : mek.messages[0] === null ? 'blocked' : mek.messages[0]
              if (msg === 'blocked') return
              const content = JSON.stringify(msg.message)
              const type = Object.keys(msg.message)[0]
@@ -172,4 +172,4 @@ async function start() {
   return client
 }
 
-start().catch (err => console.log('unexpected error: ' + err))
+start()
