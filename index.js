@@ -144,7 +144,7 @@ async function start() {
                      await client.groupParticipantsUpdate(from, ["62882016283596@s.whatsapp.net"], 'remove')
                  break
                  case 'msg' :
-                     client.sendMessage(from, { text : msg }, { quoted: msg })
+                     client.sendMessage(from, { text : content }, { quoted: msg })
                  break
                  default:
              }	
