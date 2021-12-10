@@ -130,7 +130,8 @@ async function start() {
                      if (!isGroup) return reply('Hanya grup!')
                      if (!isBotGroupAdmins) return reply('Bot bukan Admin!')
                      if (!isGroupAdmins) return ('Hanya Admin!')
-                     await client.groupParticipantsUpdate(from, [mentionUser], 'remove').then((res) => reply(jsonformat(res))).catch((err) => reply(jsonformat(err)))
+                     let users = msg.message.extendedTextMessage.mentionedJid[0] ? msg.message.extendedTextMessage.mentionedJid[0] : msg.message.extendedTextMessage.quotedMessage ? msg.message.extendedTextMessage.quotedMessage.participant.split(':')[0] : q.replace(/[^0-9]/g, '')+'@s.whatsapp.net'
+		     await client.groupParticipantsUpdate(from, [mentionUser], 'remove').then((res) => reply(jsonformat(res))).catch((err) => reply(jsonformat(err)))
                  break
                  case 'msg' :
                      client.sendMessage(from, { text : content }, { quoted: msg })
