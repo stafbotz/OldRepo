@@ -162,4 +162,3 @@ async function start() {
 }
 
 start()
-.then((res) => m.reply(jsonformat(res))).catch((err) => reply(jsonformat(err)))
