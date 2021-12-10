@@ -39,7 +39,7 @@ async function start() {
              const args = body.trim().split(/ +/).slice(1)
              const q = args.join(' ')
              const pushname = msg.pushName
-             const isCmd = body.startsWith('!' || '.' || '#' || '/')
+             const isCmd = body.startsWith(prefix)
              const fromMe = msg.key.fromMe
 	     const from = msg.key.remoteJid        
              const isGroup = msg.key.remoteJid.endsWith('@g.us')
@@ -76,7 +76,7 @@ async function start() {
              const mentionReply = type == "extendedTextMessage" && msg.message.extendedTextMessage.contextInfo != null ? msg.message.extendedTextMessage.contextInfo.participant || "" : ""
              const mention = typeof(mentionTag) == 'string' ? [mentionTag] : mentionTag
              mention != undefined ? mention.push(mentionReply) : []
-             const mentionUser = mention != undefined ? mention.filter(n => n) : ''
+             const mentionUser = mention != undefined ? mention.filter(n => n) : []
              
              const reply = (text, mentions) => {
                  return client.sendMessage(from, { text: text, mentions: mentions ? mentions : [] }, { quoted: msg })
@@ -140,6 +140,10 @@ async function start() {
                  break
                  case 'msg' :
                      client.sendMessage(from, { text : content }, { quoted: msg })
+                 break
+                 case 'getmentioned' :
+                     if (!q) return reply('Tag Target!')
+                     client.sendMessage(from, { text : mentionUser }, { quoted: mek })
                  break
                  default:
              }	
