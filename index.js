@@ -172,8 +172,11 @@ async function start() {
     })
   client.ev.on('creds.update', () => saveState)
   if (authsession !== authold) {
+    global.connection
     fs.writeFileSync('./session_old.json', authsession)
-    client.sendMessage(ownerNumber, { document: authsession , mimetype: 'application/json' })
+    if (connection === 'open') {
+      client.sendMessage(ownerNumber, { document: authsession , mimetype: 'application/json' })
+    }
   }
   return client
 }
