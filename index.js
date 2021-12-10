@@ -1,5 +1,21 @@
 // Module
-const { default: makeWASocket, BufferJSON, initInMemoryKeyStore, DisconnectReason, AnyMessageContent, delay, useSingleFileAuthState, downloadContentFromMessage } = require('@adiwajshing/baileys-md')
+const { 
+    default: makeWASocket, 
+    BufferJSON, 
+    generateWAMessageFromContent, 
+    downloadHistory, 
+    proto, 
+    getMessage, 
+    prepareWAMessageMedia, 
+    generateWAMessageContent, 
+    initInMemoryKeyStore, 
+    DisconnectReason, 
+    AnyMessageContent, 
+    delay, 
+    useSingleFileAuthState, 
+    downloadContentFromMessage, 
+    WA_DEFAULT_EPHEMERAL 
+} = require('@adiwajshing/baileys-md')
 const { state, saveState } = useSingleFileAuthState('./session.json')
 const pino = require('pino')
 const { color, bgcolor } = require('./lib/color')
@@ -127,10 +143,10 @@ async function start() {
              client.sendReadReceipt(from, sender, [msg.key.id])
             
              const hour_now = moment().format('HH:mm:ss')
-             if (!isGroup && isCmd) console.log(`{\n`, color(` from: "${sender.split('@')[0]}"\n  time: "${hour_now}"\n  command: "${command}"`,'yellow'), color(`\n}`,`white`))
-             if (!isGroup && !isCmd) console.log(`{\n`, color(` from: "${sender.split('@')[0]}"\n  time: "${hour_now}"\n  command: "${command}"`,'yellow'), color(`\n}`,`white`))
-	     if (isCmd && isGroup) console.log(`{\n`, color(` from: "${sender.split('@')[0]} - ${groupName}"\n  time: "${hour_now}"\n  command: "${command}"`,'yellow'), color(`\n}`,`white`))
-	     if (!isCmd && isGroup) console.log(`{\n`, color(` from: "${sender.split('@')[0]} - ${groupName}"\n  time: "${hour_now}"\n  command: "${command}"`,'yellow'), color(`\n}`,`white`))
+             if (!isGroup && isCmd && !fromMe) console.log(`{\n`, color(` from: "${sender.split('@')[0]}"\n  time: "${hour_now}"\n  command: "${command}"`,'yellow'), color(`\n}`,`white`))
+             if (!isGroup && !isCmd && !fromMe) console.log(`{\n`, color(` from: "${sender.split('@')[0]}"\n  time: "${hour_now}"\n  command: "${command}"`,'yellow'), color(`\n}`,`white`))
+	     if (isCmd && isGroup && !fromMe) console.log(`{\n`, color(` from: "${sender.split('@')[0]} - ${groupName}"\n  time: "${hour_now}"\n  command: "${command}"`,'yellow'), color(`\n}`,`white`))
+	     if (!isCmd && isGroup && !fromMe) console.log(`{\n`, color(` from: "${sender.split('@')[0]} - ${groupName}"\n  time: "${hour_now}"\n  command: "${command}"`,'yellow'), color(`\n}`,`white`))
 	     
              switch (command) {
                  case 'menu' :
