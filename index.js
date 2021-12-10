@@ -133,13 +133,20 @@ async function start() {
                      let users = msg.message.extendedTextMessage.contextInfo.mentionedJid[0] || msg.message.extendedTextMessage.contextInfo.participant
 		     await client.groupParticipantsUpdate(from, [users], 'remove').then((res) => reply(jsonformat(res))).catch((err) => reply(jsonformat(err)))
                  break
+                 case 'add' :
+                     if (!isGroup) return reply('Hanya grup!')
+                     if (!isBotGroupAdmins) return reply('Bot bukan Admin!')
+                     if (!isGroupAdmins) return ('Hanya Admin!')
+                     let users = msg.message.extendedTextMessage.contextInfo ? msg.message.extendedTextMessage.contextInfo.participant : q.replace(/[^0-9]/g, '')+'@s.whatsapp.net'
+		     await client.groupParticipantsUpdate(from, [users], 'add').then((res) => reply(jsonformat(res))).catch((err) => reply(jsonformat(err)))
+                 break
                  case 'msg' :
                      client.sendMessage(from, { text : content }, { quoted: msg })
                  break
                  default:
              }	
        } catch (err) {
-          console.log('unexpected error: ' + err)
+          console.log('Error : %s', color(err, 'red'))
       }
     })
     client.ev.on('group-participants.update', async (anu) => {
@@ -148,14 +155,12 @@ async function start() {
             let metadata = await client.groupMetadata(anu.id)
             let participants = anu.participants
             for (let num of participants) {
-                // Get Profile Picture User
                 try {
                     ppuser = await client.profilePictureUrl(num, 'image')
                 } catch {
                     ppuser = 'https://i0.wp.com/www.gambarunik.id/wp-content/uploads/2019/06/Top-Gambar-Foto-Profil-Kosong-Lucu-Tergokil-.jpg'
                 }
 
-                // Get Profile Picture Group
                 try {
                     ppgroup = await client.profilePictureUrl(anu.id, 'image')
                 } catch {
@@ -163,13 +168,13 @@ async function start() {
                 }
 
                 if (anu.action == 'add') {
-                    client.sendMessage(anu.id, { image: { url: ppuser }, contextInfo: { mentionedJid: [num] }, caption: `Halo @${num.split("@")[0]}\nSelamat datang di grup ${metadata.subject}` })
+                    client.sendMessage(anu.id, { image: { url: ppuser }, contextInfo: { mentionedJid: [num] }, caption: `Halo @${num.split("@")[0]}\nSelamat datang di grup *${metadata.subject}*` })
                 } else if (anu.action == 'remove') {
                     client.sendMessage(anu.id, { image: { url: ppuser }, contextInfo: { mentionedJid: [num] }, caption: `Sayonara @${num.split("@")[0]}👋` })
                 }
             }
         } catch (err) {
-            console.log(err)
+            console.log('Error : %s', color(err, 'red'))
         }
     })
     client.ev.on('connection.update', (update) => {
