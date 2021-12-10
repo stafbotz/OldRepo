@@ -74,9 +74,9 @@ async function start() {
              
              const mentionTag = type == "extendedTextMessage" && msg.message.extendedTextMessage.contextInfo != null ? msg.message.extendedTextMessage.contextInfo.mentionedJid : []
              const mentionReply = type == "extendedTextMessage" && msg.message.extendedTextMessage.contextInfo != null ? msg.message.extendedTextMessage.contextInfo.participant || "" : ""
-             const mention = typeof(mentionTag) == 'object' ? JSON.stringify(mentionTag) : mentionTag
+             const mention = typeof(mentionTag) == 'string' ? [mentionTag] : mentionTag
              mention != undefined ? mention.push(mentionReply) : []
-             const mentionUser = mention != undefined ? mention.filter(n => n) : []
+             const mentionUser = mention != undefined ? mention.filter(n => n) : ''
              
              const reply = (text, mentions) => {
                  return client.sendMessage(from, { text: text, mentions: mentions ? mentions : [] }, { quoted: msg })
