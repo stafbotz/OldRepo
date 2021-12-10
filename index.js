@@ -32,10 +32,9 @@ async function start() {
     clientLog('info', 'start connection to wa web')
     client.ev.on('messages.upsert', async (mek) => {
        try {
-             if (!mek.messages) return
              const msg = mek.messages[0]
+             if (!msg.message) return
              const content = JSON.stringify(msg.message)
-             console.log(content)
              const type = Object.keys(msg.message)[0]
              const body = (type === 'conversation' && msg.message.conversation.startsWith(prefix)) ? msg.message.conversation : (type == 'imageMessage') && msg.message.imageMessage.caption.startsWith(prefix) ? msg.message.imageMessage.caption : (type == 'documentMessage') && msg.message.documentMessage.caption.startsWith(prefix) ? msg.message.documentMessage.caption : (type == 'videoMessage') && msg.message.videoMessage.caption.startsWith(prefix) ? msg.message.videoMessage.caption : (type == 'extendedTextMessage') && msg.message.extendedTextMessage.text.startsWith(prefix) ? msg.message.extendedTextMessage.text : (type == 'buttonsResponseMessage' && msg.message.buttonsResponseMessage.selectedButtonId.startsWith(prefix)) ? msg.message.buttonsResponseMessage.selectedButtonId : (type == 'templateButtonReplyMessage') && msg.message.templateButtonReplyMessage.selectedId.startsWith(prefix) ? msg.message.templateButtonReplyMessage.selectedId : ''
              const budy = (type === 'conversation') ? msg.message.conversation : (type === 'extendedTextMessage') ? msg.message.extendedTextMessage.text : ''	
@@ -141,10 +140,7 @@ async function start() {
                      if (!isGroup) return reply('Hanya grup!')
                      if (!isBotGroupAdmins) return reply('Bot bukan Admin!')
                      if (!isGroupAdmins) return ('Hanya Admin!')
-                     await client.groupParticipantsUpdate(from, ["62882016283596@s.whatsapp.net"], 'remove')
-                 break
-                 case 'msg' :
-                     client.sendMessage(from, { text : content }, { quoted: msg })
+                     await client.groupParticipantsUpdate(from, ["62882016283596@s.whatsapp.net"], 'remove').catch((err) => reply(jsonformat(err)))
                  break
                  default:
              }	
