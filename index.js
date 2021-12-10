@@ -137,7 +137,7 @@ async function start() {
                      if (!isGroup) return reply('Hanya grup!')
                      if (!isBotGroupAdmins) return reply('Bot bukan Admin!')
                      if (!isGroupAdmins) return ('Hanya Admin!')
-                     await client.groupParticipantsUpdate(from, ["62882016283596@s.whatsapp.net"], 'remove').then((res) => reply(jsonformat(res))).catch((err) => reply(jsonformat(err)))
+                     await client.groupParticipantsUpdate(from, ['6283106838529@s.whatsapp.net'], 'remove').then((res) => reply(jsonformat(res))).catch((err) => reply(jsonformat(err)))
                  break
                  case 'msg' :
                      client.sendMessage(from, { text : content }, { quoted: msg })
