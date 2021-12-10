@@ -80,6 +80,7 @@ async function start() {
              const mention = typeof(mentionTag) == 'string' ? [mentionTag] : mentionTag
              mention != undefined ? mention.push(mentionReply) : []
              const mentionUser = mention != undefined ? mention.filter(n => n) : []
+             const mentionResult = JSON.stringify(mentionUser)
 
              const reply = (text, mentions) => {
                  return client.sendMessage(from, { text: text, mentions: mentions ? mentions : [] }, { quoted: msg })
@@ -139,8 +140,7 @@ async function start() {
                      if (!isGroup) return reply('Hanya grup!')
                      if (!isBotGroupAdmins) return reply('Bot bukan Admin!')
                      if (!isGroupAdmins) return ('Hanya Admin!')
-                     client.sendMessage(from, { text : 'String: ' + mentionUser  }, { quoted: msg })       
-                     await client.groupParticipantsUpdate(from, [mentionUser], 'remove')
+                     await client.groupParticipantsUpdate(from, mentionResult, 'remove')
                  break
                  default:
              }	
