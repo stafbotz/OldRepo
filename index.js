@@ -26,7 +26,7 @@ async function start() {
     clientLog('warn', 'make socket a wa web')
     const client = makeWASocket({ 
        printQRInTerminal: true, 
-       logger: pino({ level: 'debug' }),
+       logger: pino({ level: 'silent' }),
        auth: state
     })
     clientLog('info', 'start connection to wa web')
@@ -35,6 +35,7 @@ async function start() {
              if (!mek.messages) return
              const msg = mek.messages[0]
              const content = JSON.stringify(msg.message)
+             console.log(content)
              const type = Object.keys(msg.message)[0]
              const body = (type === 'conversation' && msg.message.conversation.startsWith(prefix)) ? msg.message.conversation : (type == 'imageMessage') && msg.message.imageMessage.caption.startsWith(prefix) ? msg.message.imageMessage.caption : (type == 'documentMessage') && msg.message.documentMessage.caption.startsWith(prefix) ? msg.message.documentMessage.caption : (type == 'videoMessage') && msg.message.videoMessage.caption.startsWith(prefix) ? msg.message.videoMessage.caption : (type == 'extendedTextMessage') && msg.message.extendedTextMessage.text.startsWith(prefix) ? msg.message.extendedTextMessage.text : (type == 'buttonsResponseMessage' && msg.message.buttonsResponseMessage.selectedButtonId.startsWith(prefix)) ? msg.message.buttonsResponseMessage.selectedButtonId : (type == 'templateButtonReplyMessage') && msg.message.templateButtonReplyMessage.selectedId.startsWith(prefix) ? msg.message.templateButtonReplyMessage.selectedId : ''
              const budy = (type === 'conversation') ? msg.message.conversation : (type === 'extendedTextMessage') ? msg.message.extendedTextMessage.text : ''	
