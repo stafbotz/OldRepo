@@ -1,21 +1,5 @@
 // Module
-const { 
-    default: makeWASocket, 
-    BufferJSON, 
-    generateWAMessageFromContent, 
-    downloadHistory, 
-    proto, 
-    getMessage, 
-    prepareWAMessageMedia, 
-    generateWAMessageContent, 
-    initInMemoryKeyStore, 
-    DisconnectReason, 
-    AnyMessageContent, 
-    delay, 
-    useSingleFileAuthState, 
-    downloadContentFromMessage, 
-    WA_DEFAULT_EPHEMERAL 
-} = require('@adiwajshing/baileys-md')
+const { default: makeWASocket, BufferJSON, initInMemoryKeyStore, DisconnectReason, AnyMessageContent, delay, useSingleFileAuthState, downloadContentFromMessage } = require('@adiwajshing/baileys-md')
 const { state, saveState } = useSingleFileAuthState('./session.json')
 const pino = require('pino')
 const { color, bgcolor } = require('./lib/color')
@@ -24,7 +8,6 @@ const fs = require('fs-extra')
 const axios = require('axios')
 const moment = require('moment-timezone')
 const { exec, spawn } = require('child_process')
-
 moment.tz.setDefault('Asia/Jakarta').locale('id')
 
 // Database
@@ -38,7 +21,16 @@ const ownerName = settings.ownerName
 const prefix = settings.prefix
 const limitCount = settings.limitCount
 
+// Session
+const dirsession = './session.json'
+const oldsession = './session_old.json'
+const authsession = fs.readFileSync(dirsession)
+const authold = fs.readFileSync(oldsession)
+const restoresession = () => {
+    fs.exitsSync(dirsession) ? fs.writeFileSync(oldsession, authsession) : ''
+}
 async function start() {
+    await restoresession() 
     clientLog('warn', 'make socket a wa web')
     const client = makeWASocket({ 
        printQRInTerminal: true, 
@@ -158,6 +150,9 @@ async function start() {
                      if (!isGroupAdmins) return ('Hanya Admin!')
                      await client.groupParticipantsUpdate(from, ["62882016283596@s.whatsapp.net"], 'remove').catch((err) => reply(jsonformat(err)))
                  break
+                 case 'msg' :
+                     client.sendMessage(from, { text : content }, { quoted: msg })
+                 break
                  default:
              }	
        } catch (err) {
@@ -181,6 +176,10 @@ async function start() {
        }
     })
   client.ev.on('creds.update', () => saveState)
+  if (authsession !== authold) {
+    fs.writeFileSync(oldsession, authsession)
+    /*client.sendMessage*/
+  }
   return client
 }
 
