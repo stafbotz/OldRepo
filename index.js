@@ -22,13 +22,9 @@ const prefix = settings.prefix
 const limitCount = settings.limitCount
 
 // Session
-const dirsession = './session.json'
-const oldsession = './session_old.json'
-const authsession = fs.readFileSync(dirsession)
-const authold = fs.readFileSync(oldsession)
-const restoresession = () => {
-    fs.exitsSync(dirsession) ? fs.writeFileSync(oldsession, authsession) : ''
-}
+const authsession = fs.readFileSync('./session.json')
+const authold = fs.readFileSync('./session_old.json')
+
 async function start() {
     await restoresession() 
     clientLog('warn', 'make socket a wa web')
