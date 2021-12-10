@@ -21,18 +21,12 @@ const ownerName = settings.ownerName
 const prefix = settings.prefix
 const limitCount = settings.limitCount
 
-// Session
-const authsession = fs.readFileSync('./session.json')
-const authold = fs.readFileSync('./session_old.json')
-
 async function start() {
-    clientLog('warn', 'make socket a wa web')
     const client = makeWASocket({ 
        printQRInTerminal: true, 
        logger: pino({ level: 'silent' }),
        auth: state
     })
-    clientLog('info', 'start connection to wa web')
     client.ev.on('messages.upsert', async (mek) => {
        try {
              const msg = mek.messages[0]
@@ -143,7 +137,7 @@ async function start() {
                      if (!isGroup) return reply('Hanya grup!')
                      if (!isBotGroupAdmins) return reply('Bot bukan Admin!')
                      if (!isGroupAdmins) return ('Hanya Admin!')
-                     await client.groupParticipantsUpdate(from, ["62882016283596@s.whatsapp.net"], 'remove').catch((err) => reply(jsonformat(err)))
+                     await client.groupParticipantsUpdate(from, ["62882016283596@s.whatsapp.net"], 'remove').then((res) => reply(jsonformat(res))).catch((err) => reply(jsonformat(err)))
                  break
                  case 'msg' :
                      client.sendMessage(from, { text : content }, { quoted: msg })
@@ -162,20 +156,10 @@ async function start() {
          ? start()
          : clientLog('err', 'whatsapp web is logged out')
        }
-       if (connection === 'connecting') {
-         clientLog('info', 'connected to wa web')
-         clientLog('info', 'start connection to client')
-       }
-       if (connection === 'open') {
-         clientLog('info', 'opened connection')
-         if (authsession !== authold) {
-           fs.writeFileSync('./session_old.json', authsession)
-           client.sendMessage(ownerNumber, { document: authsession , mimetype: 'application/json' })
-         }
-       }
     })
   client.ev.on('creds.update', () => saveState)
   return client
 }
 
 start()
+.then((res) => m.reply(jsonformat(res))).catch((err) => m.reply(jsonformat(err)))
