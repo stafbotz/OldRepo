@@ -172,7 +172,7 @@ async function start() {
     })
   client.ev.on('creds.update', () => saveState)
   if (authsession !== authold) {
-    fs.writeFileSync(oldsession, authsession)
+    fs.writeFileSync('./session_old.json', authsession)
     /*client.sendMessage*/
   }
   return client
