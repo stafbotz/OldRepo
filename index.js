@@ -213,7 +213,7 @@ async function start() {
                       if (!isBotGroupAdmins) return reply('Bot bukan Admin!')
                       if (!isGroupAdmins) return reply('Hanya Admin!')
                       var response = await client.groupRevokeInvite(from)
-                      client.sendMessage(from, { text: `*New Link for ${groupName}* :\n https://chat.whatsapp.com/${link}` detectLink: true }, { quoted: msg })
+                      client.sendMessage(from, { text: `*New Link for ${groupName}* :\n https://chat.whatsapp.com/${link}`, detectLink: true }, { quoted: msg })
                  break
                  case 'tagall':
                        if (!isGroup) return reply('Hanya grup!')
