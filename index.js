@@ -23,7 +23,8 @@ const { h2k, getBuffer, randomBytes, generateMessageID, getGroupAdmins, getRando
 const fs = require('fs-extra')
 const axios = require('axios')
 const moment = require('moment-timezone')
-const { exec, spawn } = require('child_process')
+const util = require('util')
+const { exec, spawn, execSync } = require('child_process')
 moment.tz.setDefault('Asia/Jakarta').locale('id')
 
 // Database
@@ -71,6 +72,7 @@ async function start() {
 	     const isGroupAdmins = groupAdmins.includes(sender) || false
              const isOwner = ownerNumber.includes(sender)
              const date = new Date()
+             const isAntiLink = isGroup ? antilink.includes(from) : false
             
              const listdays = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu']
              const listmonth = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember']
@@ -144,6 +146,12 @@ async function start() {
 	     if (isCmd && isGroup && !fromMe) console.log(`{\n`, color(` from: "${sender.split('@')[0]} - ${groupName}"\n  time: "${hour_now}"\n  args: "${args.length}"`,'yellow'), color(`\n}`,`white`))
 	     if (!isCmd && isGroup && !fromMe) console.log(`{\n`, color(` from: "${sender.split('@')[0]} - ${groupName}"\n  time: "${hour_now}"\n  args: "${args.length}"`,'yellow'), color(`\n}`,`white`))
 	     
+             if (isGroup && isAntiLink && !isGroupAdmins && isBotGroupAdmins){
+                if (budy.match(/(https:\/\/chat.whatsapp.com)/gi)) {
+                  await client.groupParticipantsUpdate(from, [sender], 'remove')
+                  reply(`Removing: @${sender.split('@')[0]}. Reason: send another group link`, [sender])
+                }
+              }
              switch (command) {
                  case 'menu' :
                      anu = `- *INFO ACCOUNT*\n⦿ Name : ${pushname}\n⦿ Status : ${isOwner ? 'Owner' : 'Free'}\n⦿ Limit : 30\n\n- *WAKTU INDONESIA*\n⦿ Jam : ${hour_now}\n⦿ Hari : ${hari}\n⦿ Tanggal : ${tanggal}\n\n- *LIST FEATURE*\n▢ !kick\n▢ !add\n▢ !promote\n▢ !demote\n▢ !tagall\n▢ !linkgroup\n▢ !revoke\n▢ !hidetag`
@@ -179,7 +187,8 @@ async function start() {
                      if (!isBotGroupAdmins) return reply('Bot bukan Admin!')
                      if (!isGroupAdmins) return reply('Hanya Admin!')
                      var users = msg.message.extendedTextMessage.contextInfo.mentionedJid[0] || msg.message.extendedTextMessage.contextInfo.participant
-		     await client.groupParticipantsUpdate(from, [users], 'remove').then((res) => reply(jsonformat(res))).catch((err) => reply(jsonformat(err)))
+		     await client.groupParticipantsUpdate(from, [users], 'remove')
+                     reply(`Removing: @${sender.split('@')[0]}. Reason: removed by admin`, [sender])
                  break
                  case 'add' :
                      if (!isGroup) return reply('Hanya grup!')
@@ -189,50 +198,75 @@ async function start() {
 		     await client.groupParticipantsUpdate(from, [users], 'add').then((res) => reply(jsonformat(res))).catch((err) => reply(jsonformat(err)))
                  break
                  case 'promote':
-		      if (!isGroup) return reply('Hanya grup!')
-                      if (!isBotGroupAdmins) return reply('Bot bukan Admin!')
-                      if (!isGroupAdmins) return reply('Hanya Admin!')
-                      var users = msg.message.extendedTextMessage.contextInfo.mentionedJid[0] || msg.message.extendedTextMessage.contextInfo.participant
-		      await client.groupParticipantsUpdate(from, [users], 'promote').then((res) => reply(jsonformat(res))).catch((err) => reply(jsonformat(err)))
+		     if (!isGroup) return reply('Hanya grup!')
+                     if (!isBotGroupAdmins) return reply('Bot bukan Admin!')
+                     if (!isGroupAdmins) return reply('Hanya Admin!')
+                     var users = msg.message.extendedTextMessage.contextInfo.mentionedJid[0] || msg.message.extendedTextMessage.contextInfo.participant
+		     await client.groupParticipantsUpdate(from, [users], 'promote').then((res) => reply(jsonformat(res))).catch((err) => reply(jsonformat(err)))
 	         break
 	         case 'demote': 
-                      if (!isGroup) return reply('Hanya grup!')
-                      if (!isBotGroupAdmins) return reply('Bot bukan Admin!')
-                      if (!isGroupAdmins) return reply('Hanya Admin!')
-                      var users = msg.message.extendedTextMessage.contextInfo.participant || q.replace(/[^0-9]/g, '')+'@s.whatsapp.net' 
-		      await client.groupParticipantsUpdate(from, [users], 'demote').then((res) => reply(jsonformat(res))).catch((err) => reply(jsonformat(err)))
+                     if (!isGroup) return reply('Hanya grup!')
+                     if (!isBotGroupAdmins) return reply('Bot bukan Admin!')
+                     if (!isGroupAdmins) return reply('Hanya Admin!')
+                     var users = msg.message.extendedTextMessage.contextInfo.participant || q.replace(/[^0-9]/g, '')+'@s.whatsapp.net' 
+		     await client.groupParticipantsUpdate(from, [users], 'demote').then((res) => reply(jsonformat(res))).catch((err) => reply(jsonformat(err)))
 	         break
                  case 'linkgroup':
-                      if (!isGroup) return reply('Hanya grup!')
-                      if (!isBotGroupAdmins) return reply('Bot bukan Admin!')
-                      var response = await client.groupInviteCode(from)
-                      client.sendMessage(from, { text: `https://chat.whatsapp.com/${response}\n\nLink Group : ${groupMetadata.subject}`, detectLink: true }, { quoted: msg })
+                     if (!isGroup) return reply('Hanya grup!')
+                     if (!isBotGroupAdmins) return reply('Bot bukan Admin!')
+                     var response = await client.groupInviteCode(from)
+                     client.sendMessage(from, { text: `https://chat.whatsapp.com/${response}\n\nLink Group : ${groupMetadata.subject}`, detectLink: true }, { quoted: msg })
                  break
                  case 'revoke':
-                      if (!isGroup) return reply('Hanya grup!')
-                      if (!isBotGroupAdmins) return reply('Bot bukan Admin!')
-                      if (!isGroupAdmins) return reply('Hanya Admin!')
-                      var response = await client.groupRevokeInvite(from)
-                      client.sendMessage(from, { text: `*New Link for ${groupName}* :\n https://chat.whatsapp.com/${response}`, detectLink: true }, { quoted: msg })
+                     if (!isGroup) return reply('Hanya grup!')
+                     if (!isBotGroupAdmins) return reply('Bot bukan Admin!')
+                     if (!isGroupAdmins) return reply('Hanya Admin!')
+                     var response = await client.groupRevokeInvite(from)
+                     client.sendMessage(from, { text: `*New Link for ${groupName}* :\n https://chat.whatsapp.com/${response}`, detectLink: true }, { quoted: msg })
                  break
                  case 'tagall':
-                       if (!isGroup) return reply('Hanya grup!')
-                       if (!isGroupAdmins) return reply('Hanya Admin!')
-                       var response = `*👥 Mention All*\n\n➲ *Message : ${q ? q : 'Nothing'}*\n\n`
-		       for (let mem of groupMembers) {
-		         response += `• @${mem.id.split('@')[0]}\n`
-		       }
-                       client.sendMessage(from, { text: response, mentions: groupMembers.map(a => a.id) }, { quoted: msg })
+                     if (!isGroup) return reply('Hanya grup!')
+                     if (!isGroupAdmins) return reply('Hanya Admin!')
+                     var response = `*👥 Mention All*\n\n➲ *Message : ${q ? q : 'Nothing'}*\n\n`
+		     for (let mem of groupMembers) {
+		       response += `• @${mem.id.split('@')[0]}\n`
+		     }  
+                     client.sendMessage(from, { text: response, mentions: groupMembers.map(a => a.id) }, { quoted: msg })
                  break
                  case 'hidetag':
-                       if (!isGroup) return reply('Hanya grup!')
-                       if (!isGroupAdmins) return reply('Hanya Admin!')
-                       client.sendMessage(from, { text : q ? q : '' , mentions: groupMembers.map(a => a.id)})
+                     if (!isGroup) return reply('Hanya grup!')
+                     if (!isGroupAdmins) return reply('Hanya Admin!')
+                     client.sendMessage(from, { text : q ? q : '' , mentions: groupMembers.map(a => a.id)})
+                 break
+                 case 'antilink':
+                     if (!isGroup) return reply('Hanya grup!')
+                     if (!isBotGroupAdmins) return reply('Bot bukan Admin!')
+                     if (!isGroupAdmins) return reply('Hanya Admin!')
+                     if (!q) return reply('Masukkan parameter. Contoh *!antilink enable* untuk mengaktifkan dan *!antilink disable* untuk mematikan!')
+                     if (q === 'enable') {
+                       if (isAntiLink) return reply('Antilink sudah aktif!')
+                       antilink.push(from)
+                       fs.writeFileSync('./database/antilink.json', JSON.stringify(antilink))
+                       reply('Fitur AntiLink Diaktifkan!')
+                     } else if (q === 'disable') {
+                       if (!isAntiLink) return reply('Antilink sudah mati!')
+                       var this = antilink.indexOf(from)
+                       antilink.splice(this, 1)
+                       fs.writeFileSync('./database/antilink.json', JSON.stringify(antilink))
+                       reply('Fitur AntiLink Dimatikan!')
+                     }
                  break
                  case 'getquoted':
                       reply(JSON.stringify(msg.message.extendedTextMessage.contextInfo, null, 3))
                  break
                  default:
+                 if (budy.startsWith('$')) {
+                    if (!isOwner) return reply('Hanya Owner!')
+                    exec(budy.slice(2), (err, stdout) => {
+                        if(err) return reply(err)
+                        if (stdout) return reply(stdout)
+                    })
+                 }
              }	
        } catch (err) {
           console.log('Error : %s', color(err, 'red'))
