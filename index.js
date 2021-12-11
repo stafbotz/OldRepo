@@ -1,20 +1,20 @@
 // Module
 const { 
-        default: makeWASocket, 
-        BufferJSON, 
-        initInMemoryKeyStore, 
-        DisconnectReason, 
-        AnyMessageContent, 
-        delay, 
-        proto, 
-        downloadHistory, 
-        getMessage, 
-        generateWAMessageContent, 
-        prepareWAMessageMedia,
-        useSingleFileAuthState, 
-        generateWAMessageFromContent,
-        downloadContentFromMessage,
-        WA_DEFAULT_EPHEMERAL
+       default: makeWASocket, 
+       BufferJSON, 
+       initInMemoryKeyStore, 
+       DisconnectReason, 
+       AnyMessageContent, 
+       delay, 
+       proto, 
+       downloadHistory, 
+       getMessage, 
+       generateWAMessageContent, 
+       prepareWAMessageMedia,
+       useSingleFileAuthState, 
+       generateWAMessageFromContent,
+       downloadContentFromMessage,
+       WA_DEFAULT_EPHEMERAL
 } = require('@adiwajshing/baileys-md')
 const { state, saveState } = useSingleFileAuthState('./session.json')
 const pino = require('pino')
@@ -70,7 +70,11 @@ async function start() {
 	     const isBotGroupAdmins = groupAdmins.includes(botNumber) || false
 	     const isGroupAdmins = groupAdmins.includes(sender) || false
              const isOwner = ownerNumber.includes(sender)
-              
+             const date = new Date()
+
+             const tanggal = `${date.getDate()}-${date.getMonth()}-${date.getFullYear()}`
+             const hari = `${date.getDay()}`
+
              const isUrl = (url) => {
 	         return url.match(new RegExp(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%.+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%+.~#?&/=]*)/, 'gi'))
 	     }
@@ -140,7 +144,43 @@ async function start() {
 	     
              switch (command) {
                  case 'menu' :
-                     client.sendMessage(from, { text: 'cant be changed!' }, { quoted: msg })
+                     anu = `- 𝗜𝗡𝗙𝗢 𝗔𝗖𝗖𝗢𝗨𝗡𝗧\n⦿ Name : ${pushname}\n⦿ Status : ${isOwner ? 'Owner' : 'Free'}\n⦿ Limit : 30\n\n- 𝗪𝗔𝗞𝗧𝗨 𝗜𝗡𝗗𝗢𝗡𝗘𝗦𝗜𝗔\n⦿ Jam : ${hour_now}\n⦿ Hari : ${hari}\n⦿ Tanggal : ${tanggal}\n\n- 𝗟𝗜𝗦𝗧 𝗙𝗘𝗔𝗧𝗨𝗥𝗘\n▢ !kick\n▢ !add\n▢ !promote\n▢ !demote\n▢ !tagall\n▢ !linkgroup\n▢ !hidetag`
+                     var message = await prepareWAMessageMedia({ image: fs.readFileSync('./lib/hisoka.jpg') }, { upload: client.waUploadToServer })
+                     var template = generateWAMessageFromContent(from, proto.Message.fromObject({
+                     templateMessage: {
+                         hydratedTemplate: {
+                             imageMessage: message.imageMessage,
+                             hydratedContentText: anu,
+                             hydratedButtons: [{
+                                 urlButton: {
+                                     displayText: 'Source Code',
+                                     url: 'https://github.com/stafbotz/BotWhatsapp'
+                                 }
+                             }, {
+                                 callButton: {
+                                     displayText: 'Phone Owner',
+                                     phoneNumber: '+62 831-7065-9182'
+                                 }
+                             }, {
+                                 quickReplyButton: {
+                                     displayText: 'Status Bot',
+                                     id: 'ping'
+                                 }
+                             }, {
+                                 quickReplyButton: {
+                                     displayText: 'Contact Owner',
+                                     id: 'owner'
+                                 }  
+                             }, {
+                                 quickReplyButton: {
+                                     displayText: 'Script',
+                                     id: 'sc'
+                                 }
+                              }]
+                           }
+                        }
+                     }), { userJid: from, quoted: msg })
+                     client.relayMessage(from, template.message, { messageId: template.key.id })
                  break
                  case 'kick' :
                      if (!isGroup) return reply('Hanya grup!')
@@ -156,8 +196,28 @@ async function start() {
                      var users = msg.message.extendedTextMessage.contextInfo.participant || q.replace(/[^0-9]/g, '')+'@s.whatsapp.net'
 		     await client.groupParticipantsUpdate(from, [users], 'add').then((res) => reply(jsonformat(res))).catch((err) => reply(jsonformat(err)))
                  break
-                 case 'msg' :
-                     client.sendMessage(from, { text : content }, { quoted: msg })
+                 case 'promote':
+		      if (!isGroup) return reply('Hanya grup!')
+                      if (!isBotGroupAdmins) return reply('Bot bukan Admin!')
+                      if (!isGroupAdmins) return ('Hanya Admin!')
+                      var users = msg.message.extendedTextMessage.contextInfo.mentionedJid[0] || msg.message.extendedTextMessage.contextInfo.participant
+		      await client.groupParticipantsUpdate(from, [users], 'promote').then((res) => reply(jsonformat(res))).catch((err) => reply(jsonformat(err)))
+	         break
+	         case 'demote': 
+                      if (!isGroup) return reply('Hanya grup!')
+                      if (!isBotGroupAdmins) return reply('Bot bukan Admin!')
+                      if (!isGroupAdmins) return ('Hanya Admin!')
+                      var users = msg.message.extendedTextMessage.contextInfo.participant || q.replace(/[^0-9]/g, '')+'@s.whatsapp.net' 
+		      await client.groupParticipantsUpdate(from, [users], 'demote').then((res) => reply(jsonformat(res))).catch((err) => reply(jsonformat(err)))
+	         break
+                 case 'linkgroup':
+                      if (!isGroup) return reply('Hanya grup!')
+                      if (!isBotGroupAdmins) return reply('Bot bukan Admin!')
+                      var response = await client.groupInviteCode(from)
+                      client.sendMessage(from, { text: `https://chat.whatsapp.com/${response}\n\nLink Group : ${groupMetadata.subject}`, detectLink: true }, { quoted: msg })
+                 break
+                 case 'getquoted':
+                      reply(JSON.stringify(msg.message.extendedTextMessage.contextInfo, null, 3))
                  break
                  default:
              }	
