@@ -39,7 +39,6 @@ const ownerName = settings.ownerName
 const prefix = settings.prefix
 const limitCount = settings.limitCount
 
-// Start
 async function start() {
     const client = makeWASocket({ 
        printQRInTerminal: true, 
