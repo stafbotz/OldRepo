@@ -72,8 +72,9 @@ async function start() {
              const isOwner = ownerNumber.includes(sender)
              const date = new Date()
             
-             const listdays = ['Senin','Selasa','Rabu','Kamis','Jumat','Sabtu','Minggu']
-             const tanggal = `${date.getDate()} - ${date.getMonth()} - ${date.getFullYear()}`
+             const listdays = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu']
+             const listmonth = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember']
+             const tanggal = `${date.getDate()} ${listmonth[date.getMonth()]} ${date.getFullYear()}`
              const hari = `${listdays[date.getDay()]}`
 
              const isUrl = (url) => {
@@ -145,7 +146,7 @@ async function start() {
 	     
              switch (command) {
                  case 'menu' :
-                     anu = `- 𝗜𝗡𝗙𝗢 𝗔𝗖𝗖𝗢𝗨𝗡𝗧\n⦿ Name : ${pushname}\n⦿ Status : ${isOwner ? 'Owner' : 'Free'}\n⦿ Limit : 30\n\n- 𝗪𝗔𝗞𝗧𝗨 𝗜𝗡𝗗𝗢𝗡𝗘𝗦𝗜𝗔\n⦿ Jam : ${hour_now}\n⦿ Hari : ${hari}\n⦿ Tanggal : ${tanggal}\n\n- 𝗟𝗜𝗦𝗧 𝗙𝗘𝗔𝗧𝗨𝗥𝗘\n▢ !kick\n▢ !add\n▢ !promote\n▢ !demote\n▢ !tagall\n▢ !linkgroup\n▢ !hidetag`
+                     anu = `- *INFO ACCOUNT*\n⦿ Name : ${pushname}\n⦿ Status : ${isOwner ? 'Owner' : 'Free'}\n⦿ Limit : 30\n\n- *WAKTU INDONESIA*\n⦿ Jam : ${hour_now}\n⦿ Hari : ${hari}\n⦿ Tanggal : ${tanggal}\n\n- *LIST FEATURE*\n▢ !kick\n▢ !add\n▢ !promote\n▢ !demote\n▢ !tagall\n▢ !linkgroup\n▢ !revoke\n▢ !hidetag`
                      var message = await prepareWAMessageMedia({ image: fs.readFileSync('./src/media/tree.jpg') }, { upload: client.waUploadToServer })
                      var template = generateWAMessageFromContent(from, proto.Message.fromObject({
                      templateMessage: {
@@ -176,28 +177,28 @@ async function start() {
                  case 'kick' :
                      if (!isGroup) return reply('Hanya grup!')
                      if (!isBotGroupAdmins) return reply('Bot bukan Admin!')
-                     if (!isGroupAdmins) return ('Hanya Admin!')
+                     if (!isGroupAdmins) return reply('Hanya Admin!')
                      var users = msg.message.extendedTextMessage.contextInfo.mentionedJid[0] || msg.message.extendedTextMessage.contextInfo.participant
 		     await client.groupParticipantsUpdate(from, [users], 'remove').then((res) => reply(jsonformat(res))).catch((err) => reply(jsonformat(err)))
                  break
                  case 'add' :
                      if (!isGroup) return reply('Hanya grup!')
                      if (!isBotGroupAdmins) return reply('Bot bukan Admin!')
-                     if (!isGroupAdmins) return ('Hanya Admin!')
+                     if (!isGroupAdmins) return reply('Hanya Admin!')
                      var users = msg.message.extendedTextMessage.contextInfo.participant || q.replace(/[^0-9]/g, '')+'@s.whatsapp.net'
 		     await client.groupParticipantsUpdate(from, [users], 'add').then((res) => reply(jsonformat(res))).catch((err) => reply(jsonformat(err)))
                  break
                  case 'promote':
 		      if (!isGroup) return reply('Hanya grup!')
                       if (!isBotGroupAdmins) return reply('Bot bukan Admin!')
-                      if (!isGroupAdmins) return ('Hanya Admin!')
+                      if (!isGroupAdmins) return reply('Hanya Admin!')
                       var users = msg.message.extendedTextMessage.contextInfo.mentionedJid[0] || msg.message.extendedTextMessage.contextInfo.participant
 		      await client.groupParticipantsUpdate(from, [users], 'promote').then((res) => reply(jsonformat(res))).catch((err) => reply(jsonformat(err)))
 	         break
 	         case 'demote': 
                       if (!isGroup) return reply('Hanya grup!')
                       if (!isBotGroupAdmins) return reply('Bot bukan Admin!')
-                      if (!isGroupAdmins) return ('Hanya Admin!')
+                      if (!isGroupAdmins) return reply('Hanya Admin!')
                       var users = msg.message.extendedTextMessage.contextInfo.participant || q.replace(/[^0-9]/g, '')+'@s.whatsapp.net' 
 		      await client.groupParticipantsUpdate(from, [users], 'demote').then((res) => reply(jsonformat(res))).catch((err) => reply(jsonformat(err)))
 	         break
@@ -206,6 +207,27 @@ async function start() {
                       if (!isBotGroupAdmins) return reply('Bot bukan Admin!')
                       var response = await client.groupInviteCode(from)
                       client.sendMessage(from, { text: `https://chat.whatsapp.com/${response}\n\nLink Group : ${groupMetadata.subject}`, detectLink: true }, { quoted: msg })
+                 break
+                 case 'revoke':
+                      if (!isGroup) return reply('Hanya grup!')
+                      if (!isBotGroupAdmins) return reply('Bot bukan Admin!')
+                      if (!isGroupAdmins) return reply('Hanya Admin!')
+                      var response = await client.groupRevokeInvite(from)
+                      client.sendMessage(from, { text: `*New Link for ${groupName}* :\n https://chat.whatsapp.com/${link}` detectLink: true }, { quoted: msg })
+                 break
+                 case 'tagall':
+                       if (!isGroup) return reply('Hanya grup!')
+                       if (!isGroupAdmins) return reply('Hanya Admin!')
+                       var response = `*👥 Mention All*\n\n➲ *Message : ${q ? q : 'Nothing'}*\n\n`
+		       for (let mem of groupMembers) {
+		         response += `• @${mem.id.split('@')[0]}\n`
+		       }
+                       client.sendMessage(from, { text: response, mentions: groupMembers.map(a => a.id) }, { quoted: msg })
+                 break
+                 case 'hidetag':
+                       if (!isGroup) return reply('Hanya grup!')
+                       if (!isGroupAdmins) return reply('Hanya Admin!')
+                       client.sendMessage(from, { text : q ? q : '' , mentions: groupMembers.map(a => a.id)})
                  break
                  case 'getquoted':
                       reply(JSON.stringify(msg.message.extendedTextMessage.contextInfo, null, 3))
