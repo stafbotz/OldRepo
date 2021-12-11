@@ -191,3 +191,4 @@ async function start() {
 }
 
 start()
+.catch (err => clientLog('err', err))
