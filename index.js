@@ -250,8 +250,8 @@ async function start() {
                        reply('Fitur AntiLink Diaktifkan!')
                      } else if (q === 'disable') {
                        if (!isAntiLink) return reply('Antilink sudah mati!')
-                       var this = antilink.indexOf(from)
-                       antilink.splice(this, 1)
+                       var target = antilink.indexOf(from)
+                       antilink.splice(target, 1)
                        fs.writeFileSync('./database/antilink.json', JSON.stringify(antilink))
                        reply('Fitur AntiLink Dimatikan!')
                      }
