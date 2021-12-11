@@ -88,6 +88,8 @@ async function start() {
              
              const isImage = (type == 'imageMessage')
              const isVideo = (type == 'videoMessage')
+             const quoted = msg.extendedTextMessage ? msg.extendedTextMessage.contextInfo.quotedMessage : false
+             const isMedia = (type == 'imageMessage' || type == 'videoMessage')
              const isSticker = (type == 'stickerMessage')
              const isQuotedMsg = (type == 'extendedTextMessage')
              const isQuotedImage = isQuotedMsg ? content.includes('imageMessage') ? true : false : false
@@ -149,12 +151,12 @@ async function start() {
              if (isGroup && isAntiLink && !isGroupAdmins && isBotGroupAdmins){
                 if (budy.match(/(https:\/\/chat.whatsapp.com)/gi)) {
                   await client.groupParticipantsUpdate(from, [sender], 'remove')
-                  reply(`Removing: @${sender.split('@')[0]}. Reason: send another group link`, [sender])
+                  reply(`Removing: @${sender.split('@')[0]} from group ${groupName}. Reason: send another group link`, [sender])
                 }
               }
              switch (command) {
                  case 'menu' :
-                     anu = `- *INFO ACCOUNT*\n\n⦿ Name : ${pushname}\n⦿ Status : ${isOwner ? 'Owner' : 'Free'}\n⦿ Limit : 30\n\n\n- *WAKTU INDONESIA*\n\n⦿ Jam : ${hour_now}\n⦿ Hari : ${hari}\n⦿ Tanggal : ${tanggal}\n\n\n- *LIST FEATURE*\n\n⦿ Grup Menu\n▢ !kick\n▢ !add\n▢ !promote\n▢ !demote\n▢ !tagall\n▢ !linkgroup\n▢ !revoke\n▢ !hidetag\n▢ !antilink`
+                     anu = `- *INFO ACCOUNT*\n\n⦿ Name : ${pushname}\n⦿ Status : ${isOwner ? 'Owner' : 'Free'}\n⦿ Limit : 30\n\n\n- *WAKTU INDONESIA*\n\n⦿ Jam : ${hour_now}\n⦿ Hari : ${hari}\n⦿ Tanggal : ${tanggal}\n\n\n- *LIST FEATURE*\n\n⦿ Group Menu\n▢ !kick\n▢ !add\n▢ !promote\n▢ !demote\n▢ !tagall\n▢ !linkgroup\n▢ !revoke\n▢ !hidetag\n▢ !antilink\n\n⦿ Sticker Menu`
                      var message = await prepareWAMessageMedia({ image: fs.readFileSync('./src/media/tree.jpg') }, { upload: client.waUploadToServer })
                      var template = generateWAMessageFromContent(from, proto.Message.fromObject({
                      templateMessage: {
@@ -188,7 +190,7 @@ async function start() {
                      if (!isGroupAdmins) return reply('Hanya Admin!')
                      var users = msg.message.extendedTextMessage.contextInfo.mentionedJid[0] || msg.message.extendedTextMessage.contextInfo.participant
 		     await client.groupParticipantsUpdate(from, [users], 'remove')
-                     reply(`Removing: @${sender.split('@')[0]}. Reason: removed by admin`, [sender])
+                     reply(`Removing: @${sender.split('@')[0]} from group ${groupName}. Reason: removed by admin`, [sender])
                  break
                  case 'add' :
                      if (!isGroup) return reply('Hanya grup!')
@@ -242,7 +244,7 @@ async function start() {
                      if (!isGroup) return reply('Hanya grup!')
                      if (!isBotGroupAdmins) return reply('Bot bukan Admin!')
                      if (!isGroupAdmins) return reply('Hanya Admin!')
-                     if (!q) return reply('Masukkan parameter. Contoh *!antilink enable* untuk mengaktifkan dan *!antilink disable* untuk mematikan!')
+                     if (!q) return reply('Masukkan parameter. Contoh *!antilink enable* untuk mengaktifkan dan *!antilink disable* untuk mematikan')
                      if (q === 'enable') {
                        if (isAntiLink) return reply('Antilink sudah aktif!')
                        antilink.push(from)
@@ -255,6 +257,19 @@ async function start() {
                        fs.writeFileSync('./database/antilink.json', JSON.stringify(antilink))
                        reply('Fitur AntiLink Dimatikan!')
                      }
+                 break
+                 case 'toimg':
+                     if (!isQuotedSticker) return reply('Reply Stiker!')
+                     reply('Memproses')
+                     let media = await client.downloadAndSaveMediaMessage(quoted)
+                     let ran = await getRandom('.png')
+                     exec(`ffmpeg -i ${media} ${ran}`, (err) => {
+                          fs.unlinkSync(media)
+                          if (err) throw err
+                          let buffer = fs.readFileSync(ran)
+                          client.sendMessage(from, { image: buffer }, { quoted: msg })
+                          fs.unlinkSync(ran)
+                     })
                  break
                  case 'getquoted':
                       reply(JSON.stringify(msg.message.extendedTextMessage.contextInfo, null, 3))
