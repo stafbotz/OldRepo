@@ -71,9 +71,10 @@ async function start() {
 	     const isGroupAdmins = groupAdmins.includes(sender) || false
              const isOwner = ownerNumber.includes(sender)
              const date = new Date()
-
-             const tanggal = `${date.getDate()}-${date.getMonth()}-${date.getFullYear()}`
-             const hari = `${date.getDay()}`
+            
+             const listdays = ['Senin','Selasa','Rabu','Kamis','Jumat','Sabtu','Minggu']
+             const tanggal = `${date.getDate()} - ${date.getMonth()} - ${date.getFullYear()}`
+             const hari = `${listdays[date.getDay()]}`
 
              const isUrl = (url) => {
 	         return url.match(new RegExp(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%.+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%+.~#?&/=]*)/, 'gi'))
@@ -137,10 +138,10 @@ async function start() {
              client.sendReadReceipt(from, sender, [msg.key.id])
             
              const hour_now = moment().format('HH:mm:ss')
-             if (!isGroup && isCmd && !fromMe) console.log(`{\n`, color(` from: "${sender.split('@')[0]}"\n  time: "${hour_now}"\n  command: "${command}"`,'yellow'), color(`\n}`,`white`))
-             if (!isGroup && !isCmd && !fromMe) console.log(`{\n`, color(` from: "${sender.split('@')[0]}"\n  time: "${hour_now}"\n  command: "${command}"`,'yellow'), color(`\n}`,`white`))
-	     if (isCmd && isGroup && !fromMe) console.log(`{\n`, color(` from: "${sender.split('@')[0]} - ${groupName}"\n  time: "${hour_now}"\n  command: "${command}"`,'yellow'), color(`\n}`,`white`))
-	     if (!isCmd && isGroup && !fromMe) console.log(`{\n`, color(` from: "${sender.split('@')[0]} - ${groupName}"\n  time: "${hour_now}"\n  command: "${command}"`,'yellow'), color(`\n}`,`white`))
+             if (!isGroup && isCmd && !fromMe) console.log(`{\n`, color(` from: "${sender.split('@')[0]}"\n  time: "${hour_now}"\n  args: "${args.length}"`,'yellow'), color(`\n}`,`white`))
+             if (!isGroup && !isCmd && !fromMe) console.log(`{\n`, color(` from: "${sender.split('@')[0]}"\n  time: "${hour_now}"\n  args: "${args.length}"`,'yellow'), color(`\n}`,`white`))
+	     if (isCmd && isGroup && !fromMe) console.log(`{\n`, color(` from: "${sender.split('@')[0]} - ${groupName}"\n  time: "${hour_now}"\n  args: "${args.length}"`,'yellow'), color(`\n}`,`white`))
+	     if (!isCmd && isGroup && !fromMe) console.log(`{\n`, color(` from: "${sender.split('@')[0]} - ${groupName}"\n  time: "${hour_now}"\n  args: "${args.length}"`,'yellow'), color(`\n}`,`white`))
 	     
              switch (command) {
                  case 'menu' :
