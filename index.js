@@ -318,7 +318,7 @@ async function start() {
                         .on('end', function () {
                             console.log('Finish')
                             exec(`webpmux -set exif ${addMetadata(`STAF`,`BOTZ`)} ${ran} -o ${ran}`, async (error) => {
-                            client.sendMessage(from, { sticker: { url: ran }, { quoted: msg })
+                            client.sendMessage(from, { sticker: { url: ran } }, { quoted: msg })
                             fs.unlinkSync(media)	
                             fs.unlinkSync(ran)	
                          })
@@ -343,7 +343,7 @@ async function start() {
                        .on('end', function () {
                            console.log('Finish')
                            exec(`webpmux -set exif ${addMetadata(`STAF`, `BOTZ`)} ${ran} -o ${ran}`, async (error) => {
-                           client.sendMessage(from, { sticker: { url: ran }, { quoted: msg })
+                           client.sendMessage(from, { sticker: { url: ran } }, { quoted: msg })
                            fs.unlinkSync(media)
                            fs.unlinkSync(ran)
                         })
