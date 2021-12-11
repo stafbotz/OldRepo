@@ -154,7 +154,7 @@ async function start() {
               }
              switch (command) {
                  case 'menu' :
-                     anu = `- *INFO ACCOUNT*\n⦿ Name : ${pushname}\n⦿ Status : ${isOwner ? 'Owner' : 'Free'}\n⦿ Limit : 30\n\n- *WAKTU INDONESIA*\n⦿ Jam : ${hour_now}\n⦿ Hari : ${hari}\n⦿ Tanggal : ${tanggal}\n\n- *LIST FEATURE*\n▢ !kick\n▢ !add\n▢ !promote\n▢ !demote\n▢ !tagall\n▢ !linkgroup\n▢ !revoke\n▢ !hidetag\n▢ !antilink`
+                     anu = `- *INFO ACCOUNT*\n\n⦿ Name : ${pushname}\n⦿ Status : ${isOwner ? 'Owner' : 'Free'}\n⦿ Limit : 30\n\n\n- *WAKTU INDONESIA*\n\n⦿ Jam : ${hour_now}\n⦿ Hari : ${hari}\n⦿ Tanggal : ${tanggal}\n\n\n- *LIST FEATURE*\n\n⦿ Grup Menu\n▢ !kick\n▢ !add\n▢ !promote\n▢ !demote\n▢ !tagall\n▢ !linkgroup\n▢ !revoke\n▢ !hidetag\n▢ !antilink`
                      var message = await prepareWAMessageMedia({ image: fs.readFileSync('./src/media/tree.jpg') }, { upload: client.waUploadToServer })
                      var template = generateWAMessageFromContent(from, proto.Message.fromObject({
                      templateMessage: {
@@ -173,7 +173,7 @@ async function start() {
                                  }
                              }, {
                                  quickReplyButton: {
-                                     displayText: 'Ayonima',
+                                     displayText: 'Information',
                                      id: ''
                                  }
                               }]
@@ -260,6 +260,33 @@ async function start() {
                       reply(JSON.stringify(msg.message.extendedTextMessage.contextInfo, null, 3))
                  break
                  default:
+                 if (budy.startsWith('=>')) {
+                    if (!isOwner) return reply('Hanya Owner!')
+                    function Return(sul) {
+                        sat = JSON.stringify(sul, null, 2)
+                        bang = util.format(sat)
+                        if (sat == undefined) {
+                           bang = util.format(sul)
+                        }
+                        return reply(bang)
+                    }
+                    try {
+                        reply(util.format(eval(`(async () => { return ${budy.slice(3)} })()`)))
+                    } catch (e) {
+                        reply(String(e))
+                    }
+                 }
+                 if (budy.startsWith('>')) {
+                    if (!isOwner) return reply('Hanya Owner!')
+                    try {
+                         let evaled = await eval(budy.slice(2))
+                         if (typeof evaled !== 'string') evaled = require('util').inspect(evaled)
+                        await reply(evaled)
+                     } catch (err) {
+                         m = String(err)
+                         await reply(m)
+                     }
+                 }
                  if (budy.startsWith('$')) {
                     if (!isOwner) return reply('Hanya Owner!')
                     exec(budy.slice(2), (err, stdout) => {
