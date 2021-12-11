@@ -24,6 +24,7 @@ const fs = require('fs-extra')
 const axios = require('axios')
 const moment = require('moment-timezone')
 const util = require('util')
+const ffmpeg = require('fluent-ffmpeg')
 const { exec, spawn, execSync } = require('child_process')
 moment.tz.setDefault('Asia/Jakarta').locale('id')
 
@@ -88,7 +89,7 @@ async function start() {
              
              const isImage = (type == 'imageMessage')
              const isVideo = (type == 'videoMessage')
-             const quoted = msg.extendedTextMessage ? msg.extendedTextMessage.contextInfo.quotedMessage : false
+             const quoted = msg.extendedTextMessage.contextInfo.quotedMessage
              const isMedia = (type == 'imageMessage' || type == 'videoMessage')
              const isSticker = (type == 'stickerMessage')
              const isQuotedMsg = (type == 'extendedTextMessage')
@@ -147,7 +148,47 @@ async function start() {
              if (!isGroup && !isCmd && !fromMe) console.log(`{\n`, color(` from: "${sender.split('@')[0]}"\n  time: "${hour_now}"\n  args: "${args.length}"`,'yellow'), color(`\n}`,`white`))
 	     if (isCmd && isGroup && !fromMe) console.log(`{\n`, color(` from: "${sender.split('@')[0]} - ${groupName}"\n  time: "${hour_now}"\n  args: "${args.length}"`,'yellow'), color(`\n}`,`white`))
 	     if (!isCmd && isGroup && !fromMe) console.log(`{\n`, color(` from: "${sender.split('@')[0]} - ${groupName}"\n  time: "${hour_now}"\n  args: "${args.length}"`,'yellow'), color(`\n}`,`white`))
-	     
+            
+             function addMetadata(packname, author) {	
+	           if (!packname) packname = 'WABot'; if (!author) author = 'Bot';	
+		   author = author.replace(/[^a-zA-Z0-9]/g, '');	
+		   let name = `${author}_${packname}`
+		   if (fs.existsSync(`./src/stickers/${name}.exif`)) return `./src/stickers/${name}.exif`
+		   const json = {	
+				 "sticker-pack-name": packname,
+				 "sticker-pack-publisher": author,
+		   }
+		   const littleEndian = Buffer.from([0x49, 0x49, 0x2A, 0x00, 0x08, 0x00, 0x00, 0x00, 0x01, 0x00, 0x41, 0x57, 0x07, 0x00])	
+	           const bytes = [0x00, 0x00, 0x16, 0x00, 0x00, 0x00]	
+
+                   let len = JSON.stringify(json).length	
+		   let last	
+
+		   if (len > 256) {	
+			len = len - 256	
+			bytes.unshift(0x01)	
+		   } else {	
+			bytes.unshift(0x00)	
+	           }	
+
+		   if (len < 16) {	
+			last = len.toString(16)	
+			last = "0" + len	
+		   } else {	
+			last = len.toString(16)	
+		   }	
+
+		    const buf2 = Buffer.from(last, "hex")	
+		    const buf3 = Buffer.from(bytes)	
+		    const buf4 = Buffer.from(JSON.stringify(json))	
+
+		    const buffer = Buffer.concat([littleEndian, buf2, buf3, buf4])	
+
+		    fs.writeFile(`./src/stickers/${name}.exif`, buffer, (err) => {	
+			return `./src/stickers/${name}.exif`	
+	            })	
+	      }
+	    
              if (isGroup && isAntiLink && !isGroupAdmins && isBotGroupAdmins){
                 if (budy.match(/(https:\/\/chat.whatsapp.com)/gi)) {
                   await client.groupParticipantsUpdate(from, [sender], 'remove')
@@ -156,7 +197,7 @@ async function start() {
               }
              switch (command) {
                  case 'menu' :
-                     anu = `- *INFO ACCOUNT*\n\n⦿ Name : ${pushname}\n⦿ Status : ${isOwner ? 'Owner' : 'Free'}\n⦿ Limit : 30\n\n\n- *WAKTU INDONESIA*\n\n⦿ Jam : ${hour_now}\n⦿ Hari : ${hari}\n⦿ Tanggal : ${tanggal}\n\n\n- *LIST FEATURE*\n\n⦿ Group Menu\n▢ !kick\n▢ !add\n▢ !promote\n▢ !demote\n▢ !tagall\n▢ !linkgroup\n▢ !revoke\n▢ !hidetag\n▢ !antilink\n\n⦿ Sticker Menu`
+                     anu = `- *INFO ACCOUNT*\n\n⦿ Name : ${pushname}\n⦿ Status : ${isOwner ? 'Owner' : 'Free'}\n⦿ Limit : 30\n\n\n- *WAKTU INDONESIA*\n\n⦿ Jam : ${hour_now}\n⦿ Hari : ${hari}\n⦿ Tanggal : ${tanggal}\n\n\n- *LIST FEATURE*\n\n⦿ Group Menu\n▢ !kick\n▢ !add\n▢ !promote\n▢ !demote\n▢ !tagall\n▢ !linkgroup\n▢ !revoke\n▢ !hidetag\n▢ !antilink\n\n⦿ Convert Menu\n▢ !sticker\n▢ !toimg`
                      var message = await prepareWAMessageMedia({ image: fs.readFileSync('./src/media/tree.jpg') }, { upload: client.waUploadToServer })
                      var template = generateWAMessageFromContent(from, proto.Message.fromObject({
                      templateMessage: {
@@ -258,11 +299,64 @@ async function start() {
                        reply('Fitur AntiLink Dimatikan!')
                      }
                  break
+                 case 'stiker':
+                     if (!isMedia) return reply('Reply Video/Image!')
+                     reply('Memproses!')
+                     if (isQuotedImage) {
+                        var media = await client.downloadAndSaveMediaMessage(quoted)
+                        ran = getRandom('.webp')
+                        await ffmpeg(`./${media}`)
+                        .input(media)
+                        .on('start', function (cmd) {
+                            console.log(`Started : ${cmd}`)
+                         })
+                        .on('error', function (err) {
+                            console.log(`Error : ${err}`)
+                            fs.unlinkSync(media)
+                            reply('Gagal membuat stiker!')
+                         })
+                        .on('end', function () {
+                            console.log('Finish')
+                            exec(`webpmux -set exif ${addMetadata(`STAF`,`BOTZ`)} ${ran} -o ${ran}`, async (error) => {
+                            client.sendMessage(from, { sticker: { url: ran }, { quoted: msg })
+                            fs.unlinkSync(media)	
+                            fs.unlinkSync(ran)	
+                         })
+                         })
+                        .addOutputOptions([`-vcodec`,`libwebp`,`-vf`,`scale='min(320,iw)':min'(320,ih)':force_original_aspect_ratio=decrease,fps=15, pad=320:320:-1:-1:color=white@0.0, split [a][b]; [a] palettegen=reserve_transparent=on:transparency_color=ffffff [p]; [b][p] paletteuse`])
+                        .toFormat('webp')
+                        .save(ran)
+                      } else if (isQuotedVideo && quoted.seconds < 11) {
+                        var media = await client.downloadAndSaveMediaMessage(quoted)
+                        ran = getRandom('.webp')
+                        await ffmpeg(`./${media}`)
+                       .inputFormat(media.split('.')[1])
+                       .on('start', function (cmd) {
+                           console.log(`Started : ${cmd}`)
+                        })
+                       .on('error', function (err) {
+                           console.log(`Error : ${err}`)
+                           fs.unlinkSync(media)
+                           tipe = media.endsWith('.mp4') ? 'video' : 'gif'
+                           reply('Gagal membuat stiker!')
+                        })
+                       .on('end', function () {
+                           console.log('Finish')
+                           exec(`webpmux -set exif ${addMetadata(`STAF`, `BOTZ`)} ${ran} -o ${ran}`, async (error) => {
+                           client.sendMessage(from, { sticker: { url: ran }, { quoted: msg })
+                           fs.unlinkSync(media)
+                           fs.unlinkSync(ran)
+                        })
+                        })
+                       .addOutputOptions([`-vcodec`,`libwebp`,`-vf`,`scale='min(320,iw)':min'(320,ih)':force_original_aspect_ratio=decrease,fps=15, pad=320:320:-1:-1:color=white@0.0, split [a][b]; [a] palettegen=reserve_transparent=on:transparency_color=ffffff [p]; [b][p] paletteuse`])
+                       .toFormat('webp')
+                       .save(ran)  
+                  break
                  case 'toimg':
                      if (!isQuotedSticker) return reply('Reply Stiker!')
                      reply('Memproses')
-                     let media = await client.downloadAndSaveMediaMessage(quoted)
-                     let ran = await getRandom('.png')
+                     var media = await client.downloadAndSaveMediaMessage(quoted)
+                     var ran = await getRandom('.png')
                      exec(`ffmpeg -i ${media} ${ran}`, (err) => {
                           fs.unlinkSync(media)
                           if (err) throw err
