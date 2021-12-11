@@ -1,5 +1,21 @@
 // Module
-const { default: makeWASocket, BufferJSON, initInMemoryKeyStore, DisconnectReason, AnyMessageContent, delay, useSingleFileAuthState, downloadContentFromMessage } = require('@adiwajshing/baileys-md')
+const { 
+        default: makeWASocket, 
+        BufferJSON, 
+        initInMemoryKeyStore, 
+        DisconnectReason, 
+        AnyMessageContent, 
+        delay, 
+        proto, 
+        downloadHistory, 
+        getMessage, 
+        generateWAMessageContent, 
+        prepareWAMessageMedia,
+        useSingleFileAuthState, 
+        generateWAMessageFromContent,
+        downloadContentFromMessage,
+        WA_DEFAULT_EPHEMERAL
+} = require('@adiwajshing/baileys-md')
 const { state, saveState } = useSingleFileAuthState('./session.json')
 const pino = require('pino')
 const { color, bgcolor } = require('./lib/color')
@@ -137,7 +153,7 @@ async function start() {
                      if (!isGroup) return reply('Hanya grup!')
                      if (!isBotGroupAdmins) return reply('Bot bukan Admin!')
                      if (!isGroupAdmins) return ('Hanya Admin!')
-                     var users = msg.message.extendedTextMessage.contextInfo ? msg.message.extendedTextMessage.contextInfo.participant : q.replace(/[^0-9]/g, '')+'@s.whatsapp.net'
+                     var users = msg.message.extendedTextMessage.contextInfo.participant || q.replace(/[^0-9]/g, '')+'@s.whatsapp.net'
 		     await client.groupParticipantsUpdate(from, [users], 'add').then((res) => reply(jsonformat(res))).catch((err) => reply(jsonformat(err)))
                  break
                  case 'msg' :
