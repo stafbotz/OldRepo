@@ -145,7 +145,7 @@ async function start() {
              switch (command) {
                  case 'menu' :
                      anu = `- 𝗜𝗡𝗙𝗢 𝗔𝗖𝗖𝗢𝗨𝗡𝗧\n⦿ Name : ${pushname}\n⦿ Status : ${isOwner ? 'Owner' : 'Free'}\n⦿ Limit : 30\n\n- 𝗪𝗔𝗞𝗧𝗨 𝗜𝗡𝗗𝗢𝗡𝗘𝗦𝗜𝗔\n⦿ Jam : ${hour_now}\n⦿ Hari : ${hari}\n⦿ Tanggal : ${tanggal}\n\n- 𝗟𝗜𝗦𝗧 𝗙𝗘𝗔𝗧𝗨𝗥𝗘\n▢ !kick\n▢ !add\n▢ !promote\n▢ !demote\n▢ !tagall\n▢ !linkgroup\n▢ !hidetag`
-                     var message = await prepareWAMessageMedia({ image: fs.readFileSync('./lib/hisoka.jpg') }, { upload: client.waUploadToServer })
+                     var message = await prepareWAMessageMedia({ image: fs.readFileSync('./src/media/tree.jpg') }, { upload: client.waUploadToServer })
                      var template = generateWAMessageFromContent(from, proto.Message.fromObject({
                      templateMessage: {
                          hydratedTemplate: {
@@ -163,18 +163,8 @@ async function start() {
                                  }
                              }, {
                                  quickReplyButton: {
-                                     displayText: 'Status Bot',
-                                     id: 'ping'
-                                 }
-                             }, {
-                                 quickReplyButton: {
-                                     displayText: 'Contact Owner',
-                                     id: 'owner'
-                                 }  
-                             }, {
-                                 quickReplyButton: {
-                                     displayText: 'Script',
-                                     id: 'sc'
+                                     displayText: 'Ayonima',
+                                     id: ''
                                  }
                               }]
                            }
