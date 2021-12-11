@@ -7,8 +7,8 @@
     "lib": "lib"
   },
   "scripts": {
-    "preinstall": "npm i -g pm2",
-    "start": "pm2 start index.js",
+    "preinstall": "npm install -g pm2",
+    "start": "pm2 link gsizeufd394ywdx t2eelb1tsf8dddf && pm2 start index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "IAM Imam Hafizh",
