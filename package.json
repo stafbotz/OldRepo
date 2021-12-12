@@ -1,16 +1,23 @@
 {
-  "name": "ClownwithCloud",
-  "version": "1.0.0",
+  "name": "termux-wabot",
+  "version": "0.0.2",
   "description": "No comment",
   "main": "index.js",
   "directories": {
     "lib": "lib"
   },
   "scripts": {
-    "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
   },
-  "author": "IAM Imam Hafizh",
+  "keywords": [
+    "termux",
+    "whatsapp",
+    "bot",
+    "whatsapp",
+    "bot"
+  ],
+  "author": "MhankBarBar",
   "license": "ISC",
   "dependencies": {
     "@adiwajshing/baileys-md": "github:adiwajshing/baileys#multi-device",
@@ -63,10 +70,10 @@
   "devDependencies": {},
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/stafbotz/BotWhatsapp.git"
+    "url": "git+https://github.com/mhankbarbar/termux-wabot.git"
   },
   "bugs": {
-    "url": "https://github.com/stafbotz/BotWhatsapp/issues"
+    "url": "https://github.com/mhankbarbar/termux-wabot/issues"
   },
-  "homepage": "https://github.com/stafbotz/BotWhatsapp#readme"
+  "homepage": "https://github.com/mhankbarbar/termux-wabot#readme"
 }
