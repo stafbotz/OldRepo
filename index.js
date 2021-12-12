@@ -25,6 +25,7 @@ const axios = require('axios')
 const moment = require('moment-timezone')
 const util = require('util')
 const ffmpeg = require('fluent-ffmpeg')
+const FileType = require('file-type')
 const { exec, spawn, execSync } = require('child_process')
 moment.tz.setDefault('Asia/Jakarta').locale('id')
 
@@ -362,9 +363,13 @@ async function start() {
                      for await(chunk of encmedia) {
                         media = Buffer.concat([media, chunk])
                      }
+                     var tipe = await FileType.fromBuffer(buffer)
+                     trueFileName = attachExtension ? (filename + '.' + tipe.ext) : filename
+                     await fs.writeFileSync(trueFileName, buffer)
+
                      var ran = await getRandom('.png')
-                     exec(`ffmpeg -i ${media} ${ran}`, (err) => {
-                          fs.unlinkSync(media)
+                     exec(`ffmpeg -i ${trueFileName} ${ran}`, (err) => {
+                          fs.unlinkSync(trueFileName)
                           if (err) throw err
                           let buffer = fs.readFileSync(ran)
                           client.sendMessage(from, { image: buffer }, { quoted: msg })
