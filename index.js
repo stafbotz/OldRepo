@@ -357,7 +357,7 @@ async function start() {
                  case 'toimg':
                      if (!isQuotedSticker) return reply('Reply Stiker!')
                      reply('Memproses')
-                     var media = await downloadContentFromMessage(msg.message.extendedTextMessage.contextInfo.quotedMessage, 'stickerMessage')
+                     var media = await downloadContentFromMessage(msg.message.extendedTextMessage.contextInfo.quotedMessage.stickerMessage, 'stickerMessage')
                      var ran = await getRandom('.png')
                      exec(`ffmpeg -i ${media} ${ran}`, (err) => {
                           fs.unlinkSync(media)
