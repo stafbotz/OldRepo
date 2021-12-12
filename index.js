@@ -363,16 +363,16 @@ async function start() {
                      for await(chunk of encmedia) {
                         media = Buffer.concat([media, chunk])
                      }
-                     var tipe = await FileType.fromBuffer(buffer)
+                     var tipe = await FileType.fromBuffer(media)
                      trueFileName = attachExtension ? (filename + '.' + tipe.ext) : filename
-                     await fs.writeFileSync(trueFileName, buffer)
+                     await fs.writeFileSync(trueFileName, media)
 
                      var ran = await getRandom('.png')
                      exec(`ffmpeg -i ${trueFileName} ${ran}`, (err) => {
                           fs.unlinkSync(trueFileName)
                           if (err) throw err
-                          let buffer = fs.readFileSync(ran)
-                          client.sendMessage(from, { image: buffer }, { quoted: msg })
+                          var response = fs.readFileSync(ran)
+                          client.sendMessage(from, { image: response }, { quoted: msg })
                           fs.unlinkSync(ran)
                      })
                  break
