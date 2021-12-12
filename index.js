@@ -299,7 +299,7 @@ async function start() {
                        reply('Fitur AntiLink Dimatikan!')
                      }
                  break
-                 case 'stiker':
+                 /*case 'stiker':
                      reply('Memproses!')
                      if (isMedia && msg.message.imageMessage || isQuotedImage) {
                         var media = await client.downloadAndSaveMediaMessage(msg.extendedTextMessage.contextInfo.quotedMessage || msg)
@@ -366,8 +366,11 @@ async function start() {
                           client.sendMessage(from, { image: buffer }, { quoted: msg })
                           fs.unlinkSync(ran)
                      })
+                 break*/
+                 case 'msg':
+                      reply(content)
                  break
-                 case 'getquoted':
+                 case 'getquoted' :
                       reply(JSON.stringify(msg.message.extendedTextMessage.contextInfo, null, 3))
                  break
                  default:
