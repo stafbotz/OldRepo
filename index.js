@@ -90,8 +90,6 @@ async function start() {
              
              const isImage = (type == 'imageMessage')
              const isVideo = (type == 'videoMessage')
-             const quoted = msg.extendedTextMessage.contextInfo.quotedMessage
-             const isMedia = (type == 'imageMessage' || type == 'videoMessage')
              const isSticker = (type == 'stickerMessage')
              const isQuotedMsg = (type == 'extendedTextMessage')
              const isQuotedImage = isQuotedMsg ? content.includes('imageMessage') ? true : false : false
@@ -301,10 +299,10 @@ async function start() {
                      }
                  break
                  case 'stiker':
-                     if (!isMedia) return reply('Reply Video/Image!')
+                     if (!isQuotedMsg) return reply('Reply Video/Image!')
                      reply('Memproses!')
                      if (isQuotedImage) {
-                        var media = await client.downloadAndSaveMediaMessage(quoted)
+                        var media = await client.downloadAndSaveMediaMessage(msg.extendedTextMessage.contextInfo.quotedMessage)
                         ran = getRandom('.webp')
                         await ffmpeg(`./${media}`)
                         .input(media)
@@ -328,7 +326,7 @@ async function start() {
                         .toFormat('webp')
                         .save(ran)
                       } else if (isQuotedVideo && quoted.seconds < 11) {
-                        var media = await client.downloadAndSaveMediaMessage(quoted)
+                        var media = await client.downloadAndSaveMediaMessage(msg.extendedTextMessage.contextInfo.quotedMessage)
                         ran = getRandom('.webp')
                         await ffmpeg(`./${media}`)
                        .inputFormat(media.split('.')[1])
