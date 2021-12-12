@@ -97,7 +97,8 @@ async function start() {
              const isQuotedDocument = isQuotedMsg ? content.includes('documentMessage') ? true : false : false
              const isQuotedVideo = isQuotedMsg ? content.includes('videoMessage') ? true : false : false
              const isQuotedSticker = isQuotedMsg ? content.includes('stickerMessage') ? true : false : false
-             
+             const isMedia = type.includes('videoMessage') || type.includes('imageMessage') || type.includes('stickerMessage') || type.includes('audioMessage') || type.includes('documentMessage')
+                 
              const reply = (text, mentions) => {
                  return client.sendMessage(from, { text: text, mentions: mentions ? mentions : [] }, { quoted: msg })
              }
@@ -299,10 +300,9 @@ async function start() {
                      }
                  break
                  case 'stiker':
-                     if (!isQuotedMsg) return reply('Reply Video/Image!')
                      reply('Memproses!')
-                     if (isQuotedImage) {
-                        var media = await client.downloadAndSaveMediaMessage(msg.extendedTextMessage.contextInfo.quotedMessage)
+                     if (isMedia && msg.message.imageMessage || isQuotedImage) {
+                        var media = await client.downloadAndSaveMediaMessage(msg.extendedTextMessage.contextInfo.quotedMessage || msg)
                         ran = getRandom('.webp')
                         await ffmpeg(`./${media}`)
                         .input(media)
@@ -325,8 +325,8 @@ async function start() {
                         .addOutputOptions([`-vcodec`,`libwebp`,`-vf`,`scale='min(320,iw)':min'(320,ih)':force_original_aspect_ratio=decrease,fps=15, pad=320:320:-1:-1:color=white@0.0, split [a][b]; [a] palettegen=reserve_transparent=on:transparency_color=ffffff [p]; [b][p] paletteuse`])
                         .toFormat('webp')
                         .save(ran)
-                      } else if (isQuotedVideo && quoted.seconds < 11) {
-                        var media = await client.downloadAndSaveMediaMessage(msg.extendedTextMessage.contextInfo.quotedMessage)
+                      } else if (isMedia && msg.message.VideoMessage.seconds < 11 || isQuotedVideo && quoted.seconds < 11) {
+                        var media = await client.downloadAndSaveMediaMessage(msg.extendedTextMessage.contextInfo.quotedMessage || msg)
                         ran = getRandom('.webp')
                         await ffmpeg(`./${media}`)
                        .inputFormat(media.split('.')[1])
@@ -350,12 +350,14 @@ async function start() {
                        .addOutputOptions([`-vcodec`,`libwebp`,`-vf`,`scale='min(320,iw)':min'(320,ih)':force_original_aspect_ratio=decrease,fps=15, pad=320:320:-1:-1:color=white@0.0, split [a][b]; [a] palettegen=reserve_transparent=on:transparency_color=ffffff [p]; [b][p] paletteuse`])
                        .toFormat('webp')
                        .save(ran)  
+                      } else {
+                         reply('Reply Foto atau Video!')
                       }
                  break
                  case 'toimg':
                      if (!isQuotedSticker) return reply('Reply Stiker!')
                      reply('Memproses')
-                     var media = await client.downloadAndSaveMediaMessage(quoted)
+                     var media = await client.downloadAndSaveMediaMessage(msg.message.extendedTextMessage.contextInfo.quotedMessage)
                      var ran = await getRandom('.png')
                      exec(`ffmpeg -i ${media} ${ran}`, (err) => {
                           fs.unlinkSync(media)
