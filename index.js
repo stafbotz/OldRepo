@@ -364,7 +364,7 @@ async function start() {
                         media = Buffer.concat([media, chunk])
                      }
                      var tipe = await FileType.fromBuffer(media)
-                     trueFileName = attachExtension ? (filename + '.' + tipe.ext) : filename
+                     trueFileName = ('toimg' + sender.split('@')[0] + '.' + tipe.ext)
                      await fs.writeFileSync(trueFileName, media)
 
                      var ran = await getRandom('.png')
