@@ -353,11 +353,11 @@ async function start() {
                       } else {
                          reply('Reply Foto atau Video!')
                       }
-                 break
+                 break*/
                  case 'toimg':
                      if (!isQuotedSticker) return reply('Reply Stiker!')
                      reply('Memproses')
-                     var media = await client.downloadAndSaveMediaMessage(msg.message.extendedTextMessage.contextInfo.quotedMessage)
+                     var media = await client.downloadAndSaveMediaMessage(msg)
                      var ran = await getRandom('.png')
                      exec(`ffmpeg -i ${media} ${ran}`, (err) => {
                           fs.unlinkSync(media)
@@ -366,7 +366,7 @@ async function start() {
                           client.sendMessage(from, { image: buffer }, { quoted: msg })
                           fs.unlinkSync(ran)
                      })
-                 break*/
+                 break
                  case 'msg':
                       reply(content)
                  break
