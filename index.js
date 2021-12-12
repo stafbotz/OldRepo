@@ -198,7 +198,7 @@ async function start() {
               }
              switch (command) {
                  case 'menu' :
-                     anu = `- *INFO ACCOUNT*\n\n⦿ Name : ${pushname}\n⦿ Status : ${isOwner ? 'Owner' : 'Free'}\n⦿ Limit : 30\n\n\n- *WAKTU INDONESIA*\n\n⦿ Jam : ${hour_now}\n⦿ Hari : ${hari}\n⦿ Tanggal : ${tanggal}\n\n\n- *LIST FEATURE*\n\n⦿ Group Menu\n▢ !kick\n▢ !add\n▢ !promote\n▢ !demote\n▢ !tagall\n▢ !linkgroup\n▢ !revoke\n▢ !hidetag\n▢ !antilink\n\n⦿ Convert Menu\n▢ !sticker\n▢ !toimg`
+                     anu = `- *INFO ACCOUNT*\n\n⦿ Name : ${pushname}\n⦿ Status : ${isOwner ? 'Owner' : 'Free'}\n⦿ Limit : 30\n\n\n- *WAKTU INDONESIA*\n\n⦿ Jam : ${hour_now}\n⦿ Hari : ${hari}\n⦿ Tanggal : ${tanggal}\n\n\n- *LIST FEATURE*\n\n⦿ Group Menu\n▢ !kick\n▢ !add\n▢ !promote\n▢ !demote\n▢ !tagall\n▢ !linkgroup\n▢ !revoke\n▢ !hidetag\n▢ !antilink\n\n⦿ Convert Menu\n▢ !stiker\n▢ !toimg`
                      var message = await prepareWAMessageMedia({ image: fs.readFileSync('./src/media/tree.jpg') }, { upload: client.waUploadToServer })
                      var template = generateWAMessageFromContent(from, proto.Message.fromObject({
                      templateMessage: {
@@ -300,12 +300,19 @@ async function start() {
                        reply('Fitur AntiLink Dimatikan!')
                      }
                  break
-                 /*case 'stiker':
+                 case 'stiker':
                      reply('Memproses!')
                      if (isMedia && msg.message.imageMessage || isQuotedImage) {
-                        var media = await client.downloadAndSaveMediaMessage(msg.extendedTextMessage.contextInfo.quotedMessage || msg)
+                     var encmedia = await downloadContentFromMessage((isQuotedImage ? msg.message.extendedTextMessage.contextInfo.quotedMessage.imageMessage : msg.message.imageMessage), 'image')
+                     var media = Buffer.from([])
+                     for await(chunk of encmedia) {
+                        media = Buffer.concat([media, chunk])
+                     }
+                     var tipe = await FileType.fromBuffer(media)
+                     trueFileName = ('toimg' + sender.split('@')[0] + '.' + tipe.ext)
+                     await fs.writeFileSync(trueFileName, media)
                         ran = getRandom('.webp')
-                        await ffmpeg(`./${media}`)
+                        await ffmpeg(`./${trueFileName}`)
                         .input(media)
                         .on('start', function (cmd) {
                             console.log(`Started : ${cmd}`)
@@ -319,32 +326,38 @@ async function start() {
                             console.log('Finish')
                             exec(`webpmux -set exif ${addMetadata(`STAF`,`BOTZ`)} ${ran} -o ${ran}`, async (error) => {
                             client.sendMessage(from, { sticker: { url: ran } }, { quoted: msg })
-                            fs.unlinkSync(media)	
+                            fs.unlinkSync(trueFileName)	
                             fs.unlinkSync(ran)	
                          })
                          })
                         .addOutputOptions([`-vcodec`,`libwebp`,`-vf`,`scale='min(320,iw)':min'(320,ih)':force_original_aspect_ratio=decrease,fps=15, pad=320:320:-1:-1:color=white@0.0, split [a][b]; [a] palettegen=reserve_transparent=on:transparency_color=ffffff [p]; [b][p] paletteuse`])
                         .toFormat('webp')
                         .save(ran)
-                      } else if (isMedia && msg.message.VideoMessage.seconds < 11 || isQuotedVideo && quoted.seconds < 11) {
-                        var media = await client.downloadAndSaveMediaMessage(msg.extendedTextMessage.contextInfo.quotedMessage || msg)
-                        ran = getRandom('.webp')
-                        await ffmpeg(`./${media}`)
-                       .inputFormat(media.split('.')[1])
+                      } else if (isMedia && msg.message.VideoMessage.seconds < 11 || isQuotedVideo && msg.message.extendedTextMessage.contextInfo.quotedMessage.videoMessage.seconds < 11) {
+                        var encmedia = await downloadContentFromMessage((isQuotedVideo ? msg.message.extendedTextMessage.contextInfo.quotedMessage.videoMessage : msg.message.videoMessage), 'video')
+                        var media = Buffer.from([])
+                         for await(chunk of encmedia) {
+                           media = Buffer.concat([media, chunk])
+                        }
+                        var tipe = await FileType.fromBuffer(media)
+                        trueFileName = ('toimg' + sender.split('@')[0] + '.' + tipe.ext)
+                        await fs.writeFileSync(trueFileName, media)ran = getRandom('.webp')
+                        await ffmpeg(`./${trueFileName}`)
+                       .inputFormat(trueFileName.split('.')[1])
                        .on('start', function (cmd) {
                            console.log(`Started : ${cmd}`)
                         })
                        .on('error', function (err) {
                            console.log(`Error : ${err}`)
-                           fs.unlinkSync(media)
-                           tipe = media.endsWith('.mp4') ? 'video' : 'gif'
+                           fs.unlinkSync(trueFileName)
+                           tipe = trueFileName.endsWith('.mp4') ? 'video' : 'gif'
                            reply('Gagal membuat stiker!')
                         })
                        .on('end', function () {
                            console.log('Finish')
                            exec(`webpmux -set exif ${addMetadata(`STAF`, `BOTZ`)} ${ran} -o ${ran}`, async (error) => {
                            client.sendMessage(from, { sticker: { url: ran } }, { quoted: msg })
-                           fs.unlinkSync(media)
+                           fs.unlinkSync(trueFileName)
                            fs.unlinkSync(ran)
                         })
                         })
@@ -354,7 +367,7 @@ async function start() {
                       } else {
                          reply('Reply Foto atau Video!')
                       }
-                 break*/
+                 break
                  case 'toimg':
                      if (!isQuotedSticker) return reply('Reply Stiker!')
                      reply('Memproses')
