@@ -359,8 +359,8 @@ async function start() {
                      reply('Memproses')
                      var encmedia = await downloadContentFromMessage(msg.message.extendedTextMessage.contextInfo.quotedMessage.stickerMessage, 'image')
                      var media = Buffer.from([])
-                     for await(const chunk of encmedia) {
-                        media = Buffer.concat([buffer, chunk])
+                     for await(chunk of encmedia) {
+                        media = Buffer.concat([media, chunk])
                      }
                      var ran = await getRandom('.png')
                      exec(`ffmpeg -i ${media} ${ran}`, (err) => {
