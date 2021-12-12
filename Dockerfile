@@ -13,8 +13,8 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 COPY package.json .
-RUN npm install github:adiwajshing/baileys#multi-device
 RUN npm install
+RUN npm install github:adiwajshing/baileys#multi-device
 #RUN npm install -g npm-check-updates
 #RUN ncu --upgrade
 
