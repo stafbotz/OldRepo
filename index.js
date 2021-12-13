@@ -208,19 +208,19 @@ async function start() {
                              hydratedButtons: [{
                                  urlButton: {
                                      displayText: 'Source Code',
-                                     url: 'https://github.com/stafbotz/BotWhatsapp'
+                                     url: 'https://github.com/rashidsiregar28/chikabot'
                                  }
                              }, {
                                  callButton: {
                                      displayText: 'Phone Owner',
                                      phoneNumber: '+62 831-7065-9182'
                                  }
-                             }, {
+                             }/*, {
                                  quickReplyButton: {
                                      displayText: 'Information',
                                      id: ''
                                  }
-                              }]
+                              }*/]
                            }
                         }
                      }), { userJid: from, quoted: msg })
