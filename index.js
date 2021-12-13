@@ -238,7 +238,7 @@ async function start() {
                      if (!isGroup) return reply('Hanya grup!')
                      if (!isBotGroupAdmins) return reply('Bot bukan Admin!')
                      if (!isGroupAdmins) return reply('Hanya Admin!')
-                     var users = msg.message.extendedTextMessage.contextInfo.participant || q.replace(/[^0-9]/g, '')+'@s.whatsapp.net'
+                     var users = q ? q.replace(/[^0-9]/g, '')+'@s.whatsapp.net' : msg.message.extendedTextMessage.contextInfo.participant
 		     await client.groupParticipantsUpdate(from, [users], 'add').then((res) => reply(jsonformat(res))).catch((err) => reply(jsonformat(err)))
                  break
                  case 'promote':
