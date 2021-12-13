@@ -198,7 +198,7 @@ async function start() {
               }
              switch (command) {
                  case 'menu' :
-                     anu = `- *INFO ACCOUNT*\n\n⦿ Name : ${pushname}\n⦿ Status : ${isOwner ? 'Owner' : 'Free'}\n⦿ Limit : 30\n\n\n- *WAKTU INDONESIA*\n\n⦿ Jam : ${hour_now}\n⦿ Hari : ${hari}\n⦿ Tanggal : ${tanggal}\n\n\n- *LIST FEATURE*\n\n⦿ Group Menu\n▢ !kick\n▢ !add\n▢ !promote\n▢ !demote\n▢ !tagall\n▢ !linkgroup\n▢ !revoke\n▢ !hidetag\n▢ !antilink\n\n⦿ Convert Menu\n▢ !stiker\n▢ !toimg\n▢ !tourl`
+                     anu = `- *INFO ACCOUNT*\n\n⦿ Name : ${pushname}\n⦿ Status : ${isOwner ? 'Owner' : 'Free'}\n⦿ Limit : 30\n\n\n- *WAKTU INDONESIA*\n\n⦿ Jam : ${hour_now}\n⦿ Hari : ${hari}\n⦿ Tanggal : ${tanggal}\n\n\n- *LIST FEATURE*\n\n⦿ Group Menu\n▢ !kick\n▢ !add\n▢ !promote\n▢ !demote\n▢ !tagall\n▢ !linkgroup\n▢ !revoke\n▢ !hidetag\n▢ !antilink\n\n⦿ Convert Menu\n▢ !stiker\n▢ !toimg\n▢ !tourl\n\n⦿ Main Menu\n▢ !join`
                      var message = await prepareWAMessageMedia({ image: fs.readFileSync('./src/media/tree.jpg') }, { upload: client.waUploadToServer })
                      var template = generateWAMessageFromContent(from, proto.Message.fromObject({
                      templateMessage: {
@@ -424,6 +424,12 @@ async function start() {
                          reply(util.format(response))
                       }
                       await fs.unlinkSync(encmedia)
+                 break
+                 case 'join': 
+                      if (!q || !isUrl(q) || !q.includes('chat.whatsapp.com')) return reply('Masukkan url yang valid)
+                      var query = q.split('https://chat.whatsapp.com/')[1]
+                      var response = await client.groupAcceptInvite(query)
+                      await reply(jsonformat(response))
                  break
                  default:
                  if (budy.startsWith('=>')) {
