@@ -156,8 +156,8 @@ async function start() {
 		   let name = `${author}_${packname}`
 		   if (fs.existsSync(`./src/stickers/${name}.exif`)) return `./src/stickers/${name}.exif`
 		   const json = {	
-				 "sticker-pack-name": packname,
-				 "sticker-pack-publisher": author,
+			 "sticker-pack-name": packname,
+			 "sticker-pack-publisher": author,
 		   }
 		   const littleEndian = Buffer.from([0x49, 0x49, 0x2A, 0x00, 0x08, 0x00, 0x00, 0x00, 0x01, 0x00, 0x41, 0x57, 0x07, 0x00])	
 	           const bytes = [0x00, 0x00, 0x16, 0x00, 0x00, 0x00]	
@@ -198,7 +198,7 @@ async function start() {
               }
              switch (command) {
                  case 'menu' :
-                     anu = `- *INFO ACCOUNT*\n\n⦿ Name : ${pushname}\n⦿ Status : ${isOwner ? 'Owner' : 'Free'}\n⦿ Limit : 30\n\n\n- *WAKTU INDONESIA*\n\n⦿ Jam : ${hour_now}\n⦿ Hari : ${hari}\n⦿ Tanggal : ${tanggal}\n\n\n- *LIST FEATURE*\n\n⦿ Group Menu\n▢ !kick\n▢ !add\n▢ !promote\n▢ !demote\n▢ !tagall\n▢ !linkgroup\n▢ !revoke\n▢ !hidetag\n▢ !antilink\n\n⦿ Convert Menu\n▢ !stiker\n▢ !toimg`
+                     anu = `- *INFO ACCOUNT*\n\n⦿ Name : ${pushname}\n⦿ Status : ${isOwner ? 'Owner' : 'Free'}\n⦿ Limit : 30\n\n\n- *WAKTU INDONESIA*\n\n⦿ Jam : ${hour_now}\n⦿ Hari : ${hari}\n⦿ Tanggal : ${tanggal}\n\n\n- *LIST FEATURE*\n\n⦿ Group Menu\n▢ !kick\n▢ !add\n▢ !promote\n▢ !demote\n▢ !tagall\n▢ !linkgroup\n▢ !revoke\n▢ !hidetag\n▢ !antilink\n\n⦿ Convert Menu\n▢ !stiker\n▢ !toimg\n▢ !tourl`
                      var message = await prepareWAMessageMedia({ image: fs.readFileSync('./src/media/tree.jpg') }, { upload: client.waUploadToServer })
                      var template = generateWAMessageFromContent(from, proto.Message.fromObject({
                      templateMessage: {
@@ -399,14 +399,31 @@ async function start() {
                  case 'tourl'
                       if (!q) return reply('Masukkan parameter contoh: *!tourl image* untuk gambar dan *!tourl file* untuk mengupload file besar')
                       if (q === 'image') {
-                         if (!isMedia) return
-                         var encmedia = await downloadContentFromMessage(msg.message.extendedTextMessage.contextInfo.quotedMessage.stickerMessage, 'image')
+                         if (!isMedia && !msg.message.imageMessage || !isQuotedImg) return
+                         var encmedia = await downloadContentFromMessage((isMedia ? msg.message.imageMessage : msg.message.extendedTextMessage.contextInfo.quotedMessage.imageMessage), 'image')
                          var media = Buffer.from([])
                          for await(chunk of encmedia) {
                             media = Buffer.concat([media, chunk])
                          }
+                         var tipe = await FileType.fromBuffer(media)
+                         trueFileName = ('tourl' + sender.split('@')[0] + '.' + tipe.ext)
+                         await fs.writeFileSync(trueFileName, media)
+                         var response = await telegraPh(trueFileName)
+                         reply(util.format(response))
                       } else if (q === 'file') {
+                         if (!isMedia && !msg.message.extendedTextMessage) return
+                         var encmedia = await downloadContentFromMessage((type === 'extendedTextMessage' ? msg.message[content.contextInfo.quotedMessage] : msg.message[type]), ((type === 'extendedTextMessage' ? msg.message[content.contextInfo.quotedMessage.mimetype] : msg.message[content.mimetype]))
+                         var media = Buffer.from([])
+                         for await(chunk of encmedia) {
+                            media = Buffer.concat([media, chunk])
+                         }
+                         var tipe = await FileType.fromBuffer(media)
+                         trueFileName = ('tourl' + sender.split('@')[0] + '.' + tipe.ext)
+                         await fs.writeFileSync(trueFileName, media)
+                         var response = await uploadFileUgu(trueFileName)
+                         reply(util.format(response))
                       }
+                      await fs.unlinkSync(encmedia)
                  break
                  default:
                  if (budy.startsWith('=>')) {
