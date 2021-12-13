@@ -396,7 +396,7 @@ async function start() {
                  case 'getquoted' :
                       reply(JSON.stringify(msg.message.extendedTextMessage.contextInfo, null, 3))
                  break
-                 case 'tourl'
+                 case 'tourl' :
                       if (!q) return reply('Masukkan parameter contoh: *!tourl image* untuk gambar dan *!tourl file* untuk mengupload file besar')
                       if (q === 'image') {
                          if (!isMedia && !msg.message.imageMessage || !isQuotedImg) return
