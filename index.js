@@ -398,7 +398,15 @@ async function start() {
                  break
                  case 'tourl'
                       if (!q) return reply('Masukkan parameter contoh: *!tourl image* untuk gambar dan *!tourl file* untuk mengupload file besar')
-                
+                      if (q === 'image') {
+                         if (!isMedia) return
+                         var encmedia = await downloadContentFromMessage(msg.message.extendedTextMessage.contextInfo.quotedMessage.stickerMessage, 'image')
+                         var media = Buffer.from([])
+                         for await(chunk of encmedia) {
+                            media = Buffer.concat([media, chunk])
+                         }
+                      } else if (q === 'file') {
+                      }
                  break
                  default:
                  if (budy.startsWith('=>')) {
