@@ -301,25 +301,25 @@ async function start() {
                      }
                  break
                  case 'stiker':
-                     reply('Memproses!')
-                     if (isMedia && msg.message.imageMessage || isQuotedImage) {
-                     var encmedia = await downloadContentFromMessage((isQuotedImage ? msg.message.extendedTextMessage.contextInfo.quotedMessage.imageMessage : msg.message.imageMessage), 'image')
-                     var media = Buffer.from([])
-                     for await(chunk of encmedia) {
-                        media = Buffer.concat([media, chunk])
-                     }
-                     var tipe = await FileType.fromBuffer(media)
-                     trueFileName = ('toimg' + sender.split('@')[0] + '.' + tipe.ext)
-                     await fs.writeFileSync(trueFileName, media)
+                        reply('Memproses!')
+                        if (isMedia && msg.message.imageMessage || isQuotedImage) {
+                        var encmedia = await downloadContentFromMessage((isQuotedImage ? msg.message.extendedTextMessage.contextInfo.quotedMessage.imageMessage : msg.message.imageMessage), 'image')
+                        var media = Buffer.from([])
+                        for await(chunk of encmedia) {
+                           media = Buffer.concat([media, chunk])
+                        }
+                        var tipe = await FileType.fromBuffer(media)
+                        trueFileName = ('toimg' + sender.split('@')[0] + '.' + tipe.ext)
+                        await fs.writeFileSync(trueFileName, media)
                         ran = getRandom('.webp')
                         await ffmpeg(`./${trueFileName}`)
-                        .input(media)
+                        .input(trueFileName)
                         .on('start', function (cmd) {
                             console.log(`Started : ${cmd}`)
                          })
                         .on('error', function (err) {
                             console.log(`Error : ${err}`)
-                            fs.unlinkSync(media)
+                            fs.unlinkSync(trueFileName)
                             reply('Gagal membuat stiker!')
                          })
                         .on('end', function () {
@@ -341,7 +341,8 @@ async function start() {
                         }
                         var tipe = await FileType.fromBuffer(media)
                         trueFileName = ('toimg' + sender.split('@')[0] + '.' + tipe.ext)
-                        await fs.writeFileSync(trueFileName, media)ran = getRandom('.webp')
+                        await fs.writeFileSync(trueFileName, media)
+                        ran = getRandom('.webp')
                         await ffmpeg(`./${trueFileName}`)
                        .inputFormat(trueFileName.split('.')[1])
                        .on('start', function (cmd) {
