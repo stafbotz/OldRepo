@@ -426,7 +426,7 @@ async function start() {
                       await fs.unlinkSync(encmedia)
                  break
                  case 'join': 
-                      if (!q || !isUrl(q) || !q.includes('chat.whatsapp.com')) return reply('Masukkan url yang valid)
+                      if (!q || !isUrl(q) || !q.includes('chat.whatsapp.com')) return reply('Masukkan url yang valid')
                       var query = q.split('https://chat.whatsapp.com/')[1]
                       var response = await client.groupAcceptInvite(query)
                       await reply(jsonformat(response))
