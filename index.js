@@ -19,7 +19,7 @@ const {
 const { state, saveState } = useSingleFileAuthState('./session.json')
 const pino = require('pino')
 const { color, bgcolor } = require('./lib/color')
-const { h2k, getBuffer, randomBytes, generateMessageID, getGroupAdmins, getRandom, clientLog, uploadFileUgu } = require('./lib/functions')
+const { h2k, getBuffer, randomBytes, generateMessageID, getGroupAdmins, getRandom, clientLog, uploadFileUgu, telegraPh } = require('./lib/functions')
 const fs = require('fs-extra')
 const axios = require('axios')
 const moment = require('moment-timezone')
