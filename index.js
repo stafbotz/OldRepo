@@ -27,6 +27,7 @@ const util = require('util')
 const ffmpeg = require('fluent-ffmpeg')
 const FileType = require('file-type')
 const { exec, spawn, execSync } = require('child_process')
+const xfar = require('xfarr-api')
 moment.tz.setDefault('Asia/Jakarta').locale('id')
 
 // Database
@@ -198,7 +199,7 @@ async function start() {
               }
              switch (command) {
                  case 'menu' :
-                     anu = `- *INFO ACCOUNT*\n\n⦿ Name : ${pushname}\n⦿ Status : ${isOwner ? 'Owner' : 'Free'}\n⦿ Limit : 30\n\n\n- *WAKTU INDONESIA*\n\n⦿ Jam : ${hour_now}\n⦿ Hari : ${hari}\n⦿ Tanggal : ${tanggal}\n\n\n- *LIST FEATURE*\n\n⦿ Group Menu\n▢ !kick\n▢ !add\n▢ !promote\n▢ !demote\n▢ !tagall\n▢ !linkgroup\n▢ !revoke\n▢ !hidetag\n▢ !antilink\n\n⦿ Convert Menu\n▢ !stiker\n▢ !toimg\n▢ !tourl\n\n⦿ Main Menu\n▢ !join`
+                     anu = `- *INFO ACCOUNT*\n\n⦿ Name : ${pushname}\n⦿ Status : ${isOwner ? 'Owner' : 'Free'}\n⦿ Limit : 30\n\n\n- *WAKTU INDONESIA*\n\n⦿ Jam : ${hour_now}\n⦿ Hari : ${hari}\n⦿ Tanggal : ${tanggal}\n\n\n- *LIST FEATURE*\n\n⦿ Group Menu\n▢ !kick\n▢ !add\n▢ !promote\n▢ !demote\n▢ !tagall\n▢ !linkgroup\n▢ !revoke\n▢ !hidetag\n▢ !antilink\n\n⦿ Convert Menu\n▢ !stiker\n▢ !toimg\n▢ !tourl\n\n⦿ Main Menu\n▢ !join\n\n⦿ Download Menu\n▢ !ytmp4\n▢ !ytmp3`
                      var message = await prepareWAMessageMedia({ image: fs.readFileSync('./src/media/tree.jpg') }, { upload: client.waUploadToServer })
                      var template = generateWAMessageFromContent(from, proto.Message.fromObject({
                      templateMessage: {
@@ -399,7 +400,6 @@ async function start() {
                  case 'tourl' :
                       if (!q) return reply('Masukkan parameter contoh: *!tourl image* untuk gambar dan *!tourl file* untuk mengupload file besar')
                       if (q === 'image') {
-                         if (!isMedia && !msg.message.imageMessage || !isQuotedImg) return
                          var encmedia = await downloadContentFromMessage((isMedia ? msg.message.imageMessage : msg.message.extendedTextMessage.contextInfo.quotedMessage.imageMessage), 'image')
                          var media = Buffer.from([])
                          for await(chunk of encmedia) {
@@ -411,7 +411,7 @@ async function start() {
                          var response = await telegraPh(trueFileName)
                          reply(util.format(response))
                       } else if (q === 'file') {
-                         if (!isMedia && !msg.message.extendedTextMessage) return
+                         if (!msg.message.extendedTextMessage) return
                          var encmedia = await downloadContentFromMessage((type === 'extendedTextMessage' ? msg.message[content.contextInfo.quotedMessage] : msg.message[type]), (type === 'extendedTextMessage' ? msg.message[content.contextInfo.quotedMessage.mimetype] : msg.message[content.mimetype]))
                          var media = Buffer.from([])
                          for await(chunk of encmedia) {
@@ -430,6 +430,36 @@ async function start() {
                       var query = q.split('https://chat.whatsapp.com/')[1]
                       var response = await client.groupAcceptInvite(query)
                       await reply(jsonformat(response))
+                 break
+                 case 'ytmp4':
+                      if (!q) return reply('Masukkan link video')
+                      if (!isUrl(q)) return reply('Itu bukan url')
+                      if (!q.includes('youtu.be') && !q.includes('youtube.com')) return reply('Link tidak valid')
+                      await reply('Memproses')
+                      xfar.Youtube(args[1]).then(async (data) => {
+                          var response = `*----「 YOUTUBE VIDEO 」----*\n\n`
+                          response += `*📟 Quality :* ${data.medias[1].quality}\n`
+                          response += `*🎞️ Type :* ${data.medias[1].extension}\n`
+                          response += `*💾 Size :* ${data.medias[1].formattedSize}\n`
+                          response += `*📚 Url Source :* ${data.url}\n\n`
+                          sendFileFromUrl(from, data.thumbnail, response, msg)
+                          sendFileFromUrl(from, data.medias[1].url, '', msg)             
+                     })
+                 break
+                 case 'ytmp3':
+                      if (!q) return reply('Masukkan link video')
+                      if (!isUrl(q)) return reply('Itu bukan url')
+                      if (!q.includes('youtu.be') && !q.includes('youtube.com')) return reply('Link tidak valid')
+                      await reply('Memproses')
+                      xfar.Youtube(args[1]).then(async (data) => {
+                          var response = `*----「 YOUTUBE AUDIO 」----*\n\n`
+                          response += `*📟 Quality :* ${data.medias[7].quality}\n`
+                          response += `*🎞️ Type :* ${data.medias[7].extension}\n`
+                          response += `*💾 Size :* ${data.medias[7].formattedSize}\n`
+                          response += `*📚 Url Source :* ${data.url}\n\n`
+                          sendFileFromUrl(from, data.thumbnail, response, msg)
+                          sendFileFromUrl(from, data.medias[7].url, '', msg)
+                      })
                  break
                  default:
                  if (budy.startsWith('=>')) {
