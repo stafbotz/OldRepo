@@ -412,7 +412,7 @@ async function start() {
                          reply(util.format(response))
                       } else if (q === 'file') {
                          if (!msg.message.extendedTextMessage) return
-                         var encmedia = await downloadContentFromMessage((type === 'extendedTextMessage' ? msg.message[content.contextInfo.quotedMessage] : msg.message[type]), (type === 'extendedTextMessage' ? msg.message[content.contextInfo.quotedMessage.mimetype] : msg.message[content.mimetype]))
+                         var encmedia = await downloadContentFromMessage((msg.message.extendedTextMessage.contextInfo.quotedMessage[0]))
                          var media = Buffer.from([])
                          for await(chunk of encmedia) {
                             media = Buffer.concat([media, chunk])
