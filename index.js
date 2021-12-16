@@ -49,7 +49,7 @@ const ownerName = settings.ownerName
 const prefix = settings.prefix
 const limitCount = settings.limitCount
 
-async function start() {
+async function starts() {
     const client = makeWASocket({ 
        printQRInTerminal: true, 
        logger: pino({ level: 'silent' }),
@@ -239,5 +239,5 @@ async function start() {
   return client
 }
 
-start()
+starts()
 .catch (err => clientLog('err', err))
