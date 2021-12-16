@@ -27,7 +27,6 @@ const util = require('util')
 const ffmpeg = require('fluent-ffmpeg')
 const FileType = require('file-type')
 const { exec, spawn, execSync } = require('child_process')
-const xfar = require('xfarr-api')
 moment.tz.setDefault('Asia/Jakarta').locale('id')
 
 // Database
@@ -41,7 +40,6 @@ const ownerName = settings.ownerName
 const prefix = settings.prefix
 const limitCount = settings.limitCount
 
-// Start
 async function start() {
     const client = makeWASocket({ 
        printQRInTerminal: true, 
